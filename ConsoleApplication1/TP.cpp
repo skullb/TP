@@ -65,7 +65,7 @@ float saisieFloat();
 *	Retour: Un pointeur sur un tableau de 
 *			produits
 ************************************************/
-Produit *chargerProduit(Path pCheminDuFichier);
+Produit **chargerProduit(Path pCheminDuFichier);
 
 /************************************************
 *	saisieClient:
@@ -133,7 +133,7 @@ void tableauDeBord(){
 	int cmd, totalCommande;
 	String cmdDisponibles[NBRCMD] = { "0) Sortir du programme", "1)", "2)", "3)", "4" };
 	Client *client = NULL;
-	Produit *produits = NULL;
+	Produit **produits = NULL;
 	
 	afficherCommandes(cmdDisponibles);
 	printf("Saisir une commande:");
@@ -144,6 +144,7 @@ void tableauDeBord(){
 		switch (cmd){
 		case 1:
 			client = saisieClient();
+			printf("Client %s %s", client->nom, client->prenom);
 			break;
 		case 2:
 			if (client != NULL){
@@ -161,7 +162,7 @@ void tableauDeBord(){
 			break;
 		case 3:
 			// imprimer la commande
-			int i;
+			//int i;
 			
 			break;
 		case 4:
@@ -181,24 +182,104 @@ void tableauDeBord(){
 }
 
 /* saisieString */
-String *saisieString(){
+String *saisieString(int pMaxSize){
 
 	String val;
 	String ligne;
 	String *pointeur;
 	int n;
 
-	fgets(ligne, 20, stdin),
-		n = sscanf(ligne, "%s", &val);
+	fgets(ligne, MAXCHAR + 1, stdin);
+	n = sscanf(ligne, "%s", &val);
 
 	while (n != 1) {
 		printf("Recommencer : ");
-		fgets(ligne, 20, stdin),
-			n = sscanf(ligne, "%s", &val);
+		fgets(ligne, MAXCHAR + 1, stdin);
+		n = sscanf(ligne, "%s", &val);
 	}
 
 	pointeur = (String *) malloc(strlen(val) + 1);
 	strcpy(*pointeur, val);
 
 	return pointeur;
+}
+
+Produit *donneProduit(Text *pLigneExtraire){
+	Produit *produit;
+	return produit;
+}
+
+Produit **chargerProduit(Path pCheminDuFichier){
+	Produit *produit[MAXCHAR];
+	FILE *entree;
+	Text ligne;
+	Text *ligneReelle;
+	int nbProduits = 0;
+	// Ouverture des fichiers
+	entree = fopen(pCheminDuFichier, "r");
+	if (entree == NULL) {
+		printf("Le fichier %s n'existe pas\n", pCheminDuFichier);
+	}
+	else {
+		fgets(ligne, MAXTEXT, entree);
+		// Lecture du fichier entree ligne par ligne
+		while (!EOF) {
+			// allocation de la taille réelle
+			ligneReelle = (Text *) malloc(strlen(ligne) + 1);
+			// copie dans le pointeur
+			strcpy(*ligneReelle, ligne);
+			// stockage du produit dans le tableau
+			produit[nbProduits] = donneProduit(ligneReelle);
+			// lecture de la ligne suivannte
+			fgets(ligne, MAXTEXT, entree);
+			// incrémentation du nombre de produits
+			nbProduits++;
+		}
+	}
+	
+	fclose(entree);
+
+	return produit;
+}
+
+
+Client *saisieClient(){
+	Client *client = (Client *)malloc(sizeof(Client));
+	String *nom, *prenom;
+	printf("\n Saisir le nom du client: ");
+	nom = saisieString();
+	strcpy(client->nom, *nom);
+	printf("\n Saisir le prénom du client: ");
+	prenom = saisieString();
+	strcpy(client->prenom, *prenom);
+	return client;
+}
+
+void saisieCommande(Produit **pListe){
+}
+
+void creerFacture(Produit *pCommande){
+}
+
+int saisieInt(int pMaxSize) {
+	int val, n;
+	char ligne[20];
+
+	fgets(ligne, 20, stdin),
+		n = sscanf(ligne, "%d", &val);
+	while (n != 1) {
+		printf("Recommencer : ");
+		fgets(ligne, 20, stdin),
+			n = sscanf(ligne, "%d", &val);
+	}
+	return val;
+}
+
+void afficherCommandes(String pCmdDisponibles[NBRCMD]){
+	int i;
+	int sousTotal = 0;
+	printf("Commande disponibles: \n");
+	for (i = 0; i < MAXTEXT; i++){
+		printf("%s", pCmdDisponibles[i]);
+	}
 }
