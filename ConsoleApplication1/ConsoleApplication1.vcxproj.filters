@@ -19,4 +19,7 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\..\..\Owncloud\HES-SO\2014-2015\ProgS\TP\produit.txt" />
+  </ItemGroup>
 </Project>

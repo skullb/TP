@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#define FICHE_PRODUITS "produit.txt"
 #define MAXCHAR 50
 #define MAXTEXT 1000
 #define MAXPATH 150
@@ -82,7 +83,7 @@ Client *saisieClient();
 *
 *	Retour: void
 ************************************************/
-void saisieCommande(Produit *pListe);
+void saisieCommande(Produit **pListe);
 
 /************************************************
 *	creerFacture:
@@ -148,7 +149,7 @@ void tableauDeBord(){
 			break;
 		case 2:
 			if (client != NULL){
-				produits = chargerProduit("Produits.txt");
+				produits = chargerProduit(FICHE_PRODUITS);
 				if (NULL != produits) {
 					saisieCommande(produits);
 				}
@@ -182,7 +183,7 @@ void tableauDeBord(){
 }
 
 /* saisieString */
-String *saisieString(int pMaxSize){
+String *saisieString(){
 
 	String val;
 	String ligne;
@@ -204,17 +205,11 @@ String *saisieString(int pMaxSize){
 	return pointeur;
 }
 
-Produit *donneProduit(Text *pLigneExtraire){
-	Produit *produit;
-	return produit;
-}
-
 Produit **chargerProduit(Path pCheminDuFichier){
-	Produit *produit[MAXCHAR];
+	Produit *produit[MAXCHAR] = {};
 	FILE *entree;
 	Text ligne;
-	Text *ligneReelle;
-	int nbProduits = 0;
+	int n, nbProduits = 0;
 	// Ouverture des fichiers
 	entree = fopen(pCheminDuFichier, "r");
 	if (entree == NULL) {
@@ -223,13 +218,19 @@ Produit **chargerProduit(Path pCheminDuFichier){
 	else {
 		fgets(ligne, MAXTEXT, entree);
 		// Lecture du fichier entree ligne par ligne
-		while (!EOF) {
-			// allocation de la taille réelle
-			ligneReelle = (Text *) malloc(strlen(ligne) + 1);
-			// copie dans le pointeur
-			strcpy(*ligneReelle, ligne);
-			// stockage du produit dans le tableau
-			produit[nbProduits] = donneProduit(ligneReelle);
+		while (!feof(entree)) {
+			produit[nbProduits] = (Produit *)malloc(sizeof(Produit));
+			//// allocation de la taille réelle
+			//ligneReelle = (Text *) malloc(strlen(ligne) + 1);
+			//// copie dans le pointeur
+			//strcpy(*ligneReelle, ligne);
+			//// stockage du produit dans le tableau
+			//produit[nbProduits] = donneProduit(ligneReelle);
+			n = sscanf(ligne, "%3d	%s	%s	%f", &produit[nbProduits]->noProduit, &produit[nbProduits]->marque, &produit[nbProduits]->reference, &produit[nbProduits]->prix);
+			
+			if (n != 4){
+				printf("Le fichier est mal formatté");
+			}
 			// lecture de la ligne suivannte
 			fgets(ligne, MAXTEXT, entree);
 			// incrémentation du nombre de produits
@@ -261,7 +262,7 @@ void saisieCommande(Produit **pListe){
 void creerFacture(Produit *pCommande){
 }
 
-int saisieInt(int pMaxSize) {
+int saisieInt() {
 	int val, n;
 	char ligne[20];
 
@@ -278,8 +279,8 @@ int saisieInt(int pMaxSize) {
 void afficherCommandes(String pCmdDisponibles[NBRCMD]){
 	int i;
 	int sousTotal = 0;
-	printf("Commande disponibles: \n");
-	for (i = 0; i < MAXTEXT; i++){
-		printf("%s", pCmdDisponibles[i]);
+	printf("Commandes disponibles: \n");
+	for (i = 0; i < NBRCMD; i++){
+		printf("%s \n", pCmdDisponibles[i]);
 	}
 }
