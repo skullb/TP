@@ -9,7 +9,11 @@
 #define MAXPATH 150
 #define NBRCMD 5
 #define MESSAGE_SAISIE_CMD "Saisir une commande: "
-#define MESSAGE_SAISIE_CMD_INVALIDE "Cette commande n'existe pas /n"
+#define MESSAGE_SAISIE_CMD_INVALIDE "Cette commande n'existe pas \n"
+#define MESSAGE_CLIENT_REQUIS "Vous devez entrer un client d'abord \n"
+#define MESSAGE_RECOMMENCER "Recommencer : "
+#define MESSAGE_ERREUR_CHARGEMENT_PRODUIT "Une erreur de chargement c'est produite \n"
+#define MESSAGE_SAISIE_NOM_CLIENT "Saisir le nom du client: "
 #define VRAI 1
 #define FAUX 0
 
@@ -96,7 +100,7 @@ void saisieCommande(Produit *pListe[MAXP_RODUITS], int nbProduits);
 *
 *	Retour: void
 ************************************************/
-void creerFacture(Produit *pCommande[MAXP_RODUITS], Client *pClient, int nbProduits)
+void creerFacture(Produit *pCommande[MAXP_RODUITS], Client *pClient, int nbProduits);
 
 /************************************************
 *	tableauDeBord:
@@ -127,14 +131,25 @@ void tableauDeBord();
 ************************************************/
 void afficherCommandes(String pCmdDisponibles[NBRCMD]);
 
+/************************************************
+*	printCommande:
+*	Fonction d'affichage des commandes faites
+*	par le client
+*	ptrProduits: pointeur sur la liste des
+*				 produits avec la quantité
+*	pNbProduits: Nombre de produits
+*
+*
+*	Retour: void
+************************************************/
 void printCommande(Produit *ptrProduits[MAXP_RODUITS], int pNbProduits);
 
-
+/*Fonction main*/
 void main() {
 	// lancement de l'application
 	tableauDeBord();
 }
-
+/*Fonction tableauDeBord*/
 void tableauDeBord(){
 	int cmd, totalCommande, i, nbProduits = -1;
 	String cmdDisponibles[NBRCMD] = { "0) Sortir du programme", "1)", "2)", "3)", "4" };
@@ -144,7 +159,7 @@ void tableauDeBord(){
 	nbProduits = chargerProduit(produits, FICHE_PRODUITS);
 
 	afficherCommandes(cmdDisponibles);
-	printf("Saisir une commande:");
+	printf(MESSAGE_SAISIE_CMD);
 	cmd = saisieInt();
 
 	while (cmd != 0)
@@ -160,16 +175,15 @@ void tableauDeBord(){
 					saisieCommande(produits, nbProduits);
 				}
 				else {
-					printf("Une erreur de chargement c'est produite");
+					printf(MESSAGE_ERREUR_CHARGEMENT_PRODUIT);
 				}
 			}
 			else {
-				printf("Vous devez entrer un client d'abord");
+				printf(MESSAGE_CLIENT_REQUIS);
 			}
 			break;
 		case 3:
 			// imprimer la commande
-			//int i;
 			printCommande(produits, nbProduits);
 			break;
 		case 4:
@@ -208,7 +222,7 @@ String *saisieString(){
 	n = sscanf(ligne, "%s", &val);
 
 	while (n != 1) {
-		printf("Recommencer : ");
+		printf(MESSAGE_RECOMMENCER);
 		fgets(ligne, MAXCHAR + 1, stdin);
 		n = sscanf(ligne, "%s", &val);
 	}
@@ -219,6 +233,7 @@ String *saisieString(){
 	return pointeur;
 }
 
+/*Fonction chargerProduit*/
 int chargerProduit(Produit *pProduits[MAXP_RODUITS], Path pCheminDuFichier){
 
 	FILE *entree;
@@ -253,11 +268,11 @@ int chargerProduit(Produit *pProduits[MAXP_RODUITS], Path pCheminDuFichier){
 	return nbProduits;
 }
 
-
+/*Fonction saisieClient*/
 Client *saisieClient(){
 	Client *client = (Client *)malloc(sizeof(Client));
 	String *nom, *prenom;
-	printf("\n Saisir le nom du client: ");
+	printf(MESSAGE_SAISIE_NOM_CLIENT);
 	nom = saisieString();
 	strcpy(client->nom, *nom);
 	free(nom);
@@ -269,7 +284,7 @@ Client *saisieClient(){
 	return client;
 }
 
-// pas encore ça
+/*Fonction saisieCommande*/
 void saisieCommande(Produit *pListe[MAXP_RODUITS], int nbProduits){
 	int i, noProduit, qt, trouve = FAUX, index, inventaireQt;
 	index = -1;
@@ -309,6 +324,7 @@ void saisieCommande(Produit *pListe[MAXP_RODUITS], int nbProduits){
 	}
 }
 
+/*Fonction printCommande*/
 void printCommande(Produit *ptrProduits[MAXP_RODUITS], int pNbProduits){
 	int i, prixTotal;
 	printf("Produit commandés:\n");
@@ -319,6 +335,7 @@ void printCommande(Produit *ptrProduits[MAXP_RODUITS], int pNbProduits){
 	}
 }
 
+/*Fonction creerFacture*/
 void creerFacture(Produit *pCommande[MAXP_RODUITS], Client *pClient, int nbProduits){
 	Path facture;
 	String nomPrenom;
@@ -327,26 +344,32 @@ void creerFacture(Produit *pCommande[MAXP_RODUITS], Client *pClient, int nbProdu
 	float subTotal;
 	float total = 0;
 	
-	strcat(facture, pClient->nom);
+	// création du nom de fichier
+	strcpy(facture, pClient->nom);
 	strcat(facture, pClient->prenom);
 	strcat(facture, ".html");
 
-	strcat(nomPrenom, pClient->nom);
+	// création de la concaténation de Nom Prénom
+	strcpy(nomPrenom, pClient->nom);
 	strcat(nomPrenom, " ");
 	strcat(nomPrenom, pClient->prenom);
 
 	out = fopen(facture, "w");
 
-	if (NULL != out){
+	if (NULL == out){
 		printf("Erreur d'accès au fichier de facture");
 	} else {
+		
 		fprintf(out,"<html>\n");
 		fprintf(out, "\t<head>\n");
+		// titre de la page
 		fprintf(out, "\t\t<title>%s</title>\n", nomPrenom);
 		fprintf(out, "\t</head>\n");
 		fprintf(out, "\t<body>\n");
-		fprintf(out, "\t\t<table>\n");
-		fprintf(out, "\t\t\t<tr backgroudColor=\"yellow\">\n");
+		// création de la table avec 
+		// le header du tableau
+		fprintf(out, "\t\t<table border=\"1px\">\n");
+		fprintf(out, "\t\t\t<tr bgcolor=\"yellow\">\n");
 		fprintf(out, "\t\t\t\t<th>No de produit</th>\n");
 		fprintf(out, "\t\t\t\t<th>Marque</th>\n");
 		fprintf(out, "\t\t\t\t<th>No de série</th>\n");
@@ -354,48 +377,57 @@ void creerFacture(Produit *pCommande[MAXP_RODUITS], Client *pClient, int nbProdu
 		fprintf(out, "\t\t\t\t<th>Prix</th>\n");
 		fprintf(out, "\t\t\t</tr>\n");
 		
+		// itération sur les produits
 		for (i = 0; i < nbProduits; i++){
+
+			// afficher que ceux dont la quantité est
+			// supérieure à 0
 			if (pCommande[i]->quantite > 0){
+				// calcul du sous total et total
 				subTotal = pCommande[i]->quantite * pCommande[i]->prix;
 				total += subTotal;
+				// création des lignes du  tableau
 				fprintf(out, "\t\t\t<tr>\n");
-				fprintf(out, "\t\t\t\t<td>%s</td>\n", pCommande[i]->noProduit);
-				fprintf(out, "\t\t\t\t<td>%s</td>\n", pCommande[i]->marque);
-				fprintf(out, "\t\t\t\t<td>%s</td>\n", pCommande[i]->reference);
-				fprintf(out, "\t\t\t\t<td>%d</td>\n", pCommande[i]->quantite);
+				fprintf(out, "\t\t\t\t<td>%d</td>\n", &pCommande[i]->noProduit);
+				fprintf(out, "\t\t\t\t<td>%s</td>\n", &pCommande[i]->marque);
+				fprintf(out, "\t\t\t\t<td>%s</td>\n", &pCommande[i]->reference);
+				fprintf(out, "\t\t\t\t<td>%d</td>\n", &pCommande[i]->quantite);
 				fprintf(out, "\t\t\t\t<td>%f</td>\n", subTotal);
 				fprintf(out, "\t\t\t</tr>\n");
 			}
-			fprintf(out, "\t\t\t<tr>\n");
-			fprintf(out, "\t\t\t\t<td><td>\n");
-			fprintf(out, "\t\t\t\t<td><td>\n");
-			fprintf(out, "\t\t\t\t<td><td>\n");
-			fprintf(out, "\t\t\t\t<td><td>\n");
-			fprintf(out, "\t\t\t\t<td>%f<td>\n", total);
-			fprintf(out, "\t\t\t</tr>\n");
 		}
-		
+
+		// ajout du pieds avec le total
+		fprintf(out, "\t\t\t<tr>\n");
+		fprintf(out, "\t\t\t\t<td><td>\n");
+		fprintf(out, "\t\t\t\t<td><td>\n");
+		fprintf(out, "\t\t\t\t<td><td>\n");
+		fprintf(out, "\t\t\t\t<td>%f<td>\n", total);
+		fprintf(out, "\t\t\t</tr>\n");
 		fprintf(out, "\t\t</table>\n");
 		fprintf(out, "\t</body>\n");
 		fprintf(out, "</html>\n");
 	}
+	// sauver dans le fichier
 	fclose(out);
 }
 
+/* saisie d'entiers*/
 int saisieInt() {
 	int val, n;
-	char ligne[20];
+	char ligne[MAXCHAR];
 
-	fgets(ligne, 20, stdin),
+	fgets(ligne, MAXCHAR, stdin),
 		n = sscanf(ligne, "%d", &val);
 	while (n != 1) {
 		printf("Recommencer : ");
-		fgets(ligne, 20, stdin),
+		fgets(ligne, MAXCHAR, stdin),
 			n = sscanf(ligne, "%d", &val);
 	}
 	return val;
 }
 
+/* Fonction afficherCommande */
 void afficherCommandes(String pCmdDisponibles[NBRCMD]){
 	int i;
 	int sousTotal = 0;
