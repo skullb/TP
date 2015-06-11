@@ -96,7 +96,7 @@ void saisieCommande(Produit *pListe[MAXP_RODUITS], int nbProduits);
 *
 *	Retour: void
 ************************************************/
-void creerFacture(Produit *pListe[MAXP_RODUITS]);
+void creerFacture(Produit *pCommande[MAXP_RODUITS], Client *pClient, int nbProduits)
 
 /************************************************
 *	tableauDeBord:
@@ -174,6 +174,7 @@ void tableauDeBord(){
 			break;
 		case 4:
 			// créer un fichier de factures
+			creerFacture(produits, client, nbProduits);
 			break;
 		default:
 			printf(MESSAGE_SAISIE_CMD_INVALIDE);
@@ -318,7 +319,67 @@ void printCommande(Produit *ptrProduits[MAXP_RODUITS], int pNbProduits){
 	}
 }
 
-void creerFacture(Produit *pCommande){
+void creerFacture(Produit *pCommande[MAXP_RODUITS], Client *pClient, int nbProduits){
+	Path facture;
+	String nomPrenom;
+	FILE *out;
+	int i;
+	float subTotal;
+	float total = 0;
+	
+	strcat(facture, pClient->nom);
+	strcat(facture, pClient->prenom);
+	strcat(facture, ".html");
+
+	strcat(nomPrenom, pClient->nom);
+	strcat(nomPrenom, " ");
+	strcat(nomPrenom, pClient->prenom);
+
+	out = fopen(facture, "w");
+
+	if (NULL != out){
+		printf("Erreur d'accès au fichier de facture");
+	} else {
+		fprintf(out,"<html>\n");
+		fprintf(out, "\t<head>\n");
+		fprintf(out, "\t\t<title>%s</title>\n", nomPrenom);
+		fprintf(out, "\t</head>\n");
+		fprintf(out, "\t<body>\n");
+		fprintf(out, "\t\t<table>\n");
+		fprintf(out, "\t\t\t<tr backgroudColor=\"yellow\">\n");
+		fprintf(out, "\t\t\t\t<th>No de produit</th>\n");
+		fprintf(out, "\t\t\t\t<th>Marque</th>\n");
+		fprintf(out, "\t\t\t\t<th>No de série</th>\n");
+		fprintf(out, "\t\t\t\t<th>Quantité</th>\n");
+		fprintf(out, "\t\t\t\t<th>Prix</th>\n");
+		fprintf(out, "\t\t\t</tr>\n");
+		
+		for (i = 0; i < nbProduits; i++){
+			if (pCommande[i]->quantite > 0){
+				subTotal = pCommande[i]->quantite * pCommande[i]->prix;
+				total += subTotal;
+				fprintf(out, "\t\t\t<tr>\n");
+				fprintf(out, "\t\t\t\t<td>%s</td>\n", pCommande[i]->noProduit);
+				fprintf(out, "\t\t\t\t<td>%s</td>\n", pCommande[i]->marque);
+				fprintf(out, "\t\t\t\t<td>%s</td>\n", pCommande[i]->reference);
+				fprintf(out, "\t\t\t\t<td>%d</td>\n", pCommande[i]->quantite);
+				fprintf(out, "\t\t\t\t<td>%f</td>\n", subTotal);
+				fprintf(out, "\t\t\t</tr>\n");
+			}
+			fprintf(out, "\t\t\t<tr>\n");
+			fprintf(out, "\t\t\t\t<td><td>\n");
+			fprintf(out, "\t\t\t\t<td><td>\n");
+			fprintf(out, "\t\t\t\t<td><td>\n");
+			fprintf(out, "\t\t\t\t<td><td>\n");
+			fprintf(out, "\t\t\t\t<td>%f<td>\n", total);
+			fprintf(out, "\t\t\t</tr>\n");
+		}
+		
+		fprintf(out, "\t\t</table>\n");
+		fprintf(out, "\t</body>\n");
+		fprintf(out, "</html>\n");
+	}
+	fclose(out);
 }
 
 int saisieInt() {
