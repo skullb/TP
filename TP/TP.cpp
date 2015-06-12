@@ -15,7 +15,7 @@
 #define MESSAGE_ERREUR_FICHIER_INNEXISTANT "Le fichier %s n'existe pas\n"
 #define MESSAGE_ERREUR_CLIENT_REQUIS "Vous devez entrer un client d'abord \n"
 #define MESSAGE_ERREUR_FONCTION_INVALIDE "Cette fonction n'existe pas \n"
-#define MESSAGE_ERREUR_PRODUIT_DEPASSEMENT "dépassement capacitée produits"
+#define MESSAGE_ERREUR_PRODUIT_DEPASSEMENT "Les %d dernières lignes n'ont pas pues etre chargees"
 
 // messages de saisie
 #define MESSAGE_SAISIE_RECOMMENCER "Recommencer : "
@@ -59,6 +59,10 @@
 #define NBRCMD 5
 #define VRAI 1
 #define FAUX 0
+#define MAX_PRODUIT_CHARGEMENT_ERREUR 3
+#define ERREUR_PRODUIT_CHARGEMENT 0
+#define ERREUR_PRODUIT_CHARGEMENT_FORMAT 1
+#define ERREUR_PRODUIT_CHARGEMENT_DEPASSEMENT 2
 
 /* On définie un type String avec une taille de MAXCHAR */
 typedef char String[MAXCHAR];
@@ -117,9 +121,15 @@ float saisieFloat();
 *			   et des quantitées
 *	pCheminduFichier: le chemin du fichier des
 *					  produits à charger
+*	Erreurs: le traitement des erreurs essaie
+*			 de charger les produits tant qu'il 
+*			 y arrive et avise l'utilisateur
+*			 des erreurs en donnant les lignes
+*			 Si l'erreur n'est pas récupérable
+*			 il retournera 0
 *
-*	Retour: Un pointeur sur un tableau de
-*			produits
+*	Retour: Un entier du nombre de produits 
+			chargés
 ************************************************/
 int chargerProduit(Produit *pProduits[MAX_PRODUITS], Path pCheminDuFichier);
 
@@ -299,36 +309,101 @@ int chargerProduit(Produit *pProduits[MAX_PRODUITS], Path pCheminDuFichier){
 	FILE *entree;
 	Produit *res;
 	Text ligne;
-	int n, nbProduits = 0;
+	String lignesErr = "";
+	String noLigneErr = "";
+	String separateur = "";
+	String formatD;
+	String format="%3d	";
+	int i,erreurFormat, erreurDepassement, erreurChargement, n, indexErreurForm =0,indexErreurDep = 0, nbProduits = 0;
+	int lignesNonChargees[MAX_PRODUIT_CHARGEMENT_ERREUR][MAX_PRODUITS] = {};
+
+	erreurDepassement = FAUX;
+	erreurFormat = FAUX;
+	erreurChargement = FAUX;
+
+	// définition du format dynamique pour sscanf
+	sprintf(formatD, "%%%ds	%%%ds", MAXCHAR-1, MAXCHAR-1);
+	strcat(format, formatD);
+	strcat(format, "	%f");
+	
 	// Ouverture des fichiers
 	entree = fopen(pCheminDuFichier, "r");
 	if (entree == NULL) {
-		printf(MESSAGE_ERREUR_FICHIER_INNEXISTANT, pCheminDuFichier);
+		erreurChargement = VRAI;
+		lignesNonChargees[ERREUR_PRODUIT_CHARGEMENT][0] = 1;
 	}
 	else {
 		fgets(ligne, MAXTEXT, entree);
 		// Lecture du fichier entree ligne par ligne
 		while (!feof(entree)) {
 			// contrôle de dépassement de tableau
-			if (nbProduits > MAX_PRODUITS){
-				printf(MESSAGE_ERREUR_PRODUIT_DEPASSEMENT);
+			if (erreurFormat || nbProduits > MAX_PRODUITS){
+				erreurFormat = VRAI;
+				lignesNonChargees[ERREUR_PRODUIT_CHARGEMENT_DEPASSEMENT] [indexErreurDep] = nbProduits + 1;
+
 			} else {
 				pProduits[nbProduits] = (Produit *)malloc(sizeof(Produit));
-				n = sscanf(ligne, "%3d	%s	%s	%f", &pProduits[nbProduits]->noProduit, &pProduits[nbProduits]->marque, &pProduits[nbProduits]->reference, &pProduits[nbProduits]->prix);
+				n = sscanf(ligne, format, &pProduits[nbProduits]->noProduit, &pProduits[nbProduits]->marque, &pProduits[nbProduits]->reference, &pProduits[nbProduits]->prix);
 				pProduits[nbProduits]->quantite = 0;
 
 				if (n != 4){
-					printf(MESSAGE_ERREUR_FICHIER_MAL_FORMATE);
+					nbProduits = 0;
+					erreurFormat = VRAI;
+					lignesNonChargees[ERREUR_PRODUIT_CHARGEMENT_FORMAT][indexErreurForm] = nbProduits + 1;
+					indexErreurForm++;
+				}
+				else {
+					// incrémentation du nombre de produits
+					nbProduits++;
 				}
 				// lecture de la ligne suivannte
 				fgets(ligne, MAXTEXT, entree);
-				// incrémentation du nombre de produits
-				nbProduits++;
 			}
 		}
 	}
 
 	fclose(entree);
+
+	// Afficher l'erreur pour le dépassement de tableau
+	// l'erreur n'interompt pas le programme mais signale les lignes
+	// non chargées
+	if (erreurChargement || erreurFormat || erreurDepassement) {
+		
+		if (lignesNonChargees[ERREUR_PRODUIT_CHARGEMENT][0] == 1){
+			printf(MESSAGE_ERREUR_FICHIER_INNEXISTANT);
+		}
+		else {
+			// Si il y a des erreurs de formatage
+			if (indexErreurForm > 0){
+				// On itère à quelles lignes
+				// et on concatène en format lisible
+				for (i = 0; i < indexErreurForm; i++){
+					sprintf(noLigneErr, "%d", lignesNonChargees[ERREUR_PRODUIT_CHARGEMENT_FORMAT][i]+1);
+					strcat(lignesErr, separateur);
+					strcat(lignesErr, noLigneErr);
+					strcpy(separateur, ", ");
+				}
+				// On affiche l'erreur avec les lignes auxquels les
+				// erreurs sont détéctées
+				printf(MESSAGE_ERREUR_FICHIER_MAL_FORMATE, lignesErr);
+			}
+
+			// Si il y a dépassement
+			if (indexErreurDep > 0) {
+				// On itère à quelles lignes
+				// et on concatène en format lisible
+				for (i = 0; i < indexErreurDep; i++) {
+					sprintf(noLigneErr, "%d", lignesNonChargees[ERREUR_PRODUIT_CHARGEMENT_DEPASSEMENT][i] + 1);
+					strcat(lignesErr, separateur);
+					strcat(lignesErr, noLigneErr);
+					strcpy(separateur, ", ");
+				}
+				// On affiche l'erreur avec les lignes auxquels les
+				// erreurs sont détéctées
+				printf(MESSAGE_ERREUR_PRODUIT_DEPASSEMENT, lignesErr);
+			}
+		}
+	}
 
 	return nbProduits;
 }
