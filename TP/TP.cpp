@@ -53,6 +53,7 @@
 #define FICHE_PRODUITS "produit.txt"
 #define MAXCHAR 50
 #define MAXENTIER 50
+#define MAXCELLULES 15
 #define MAXTEXT 1000
 #define MAX_PRODUITS 100
 #define MAXPATH 150
@@ -471,12 +472,11 @@ void printCommande(Produit *ptrProduits[MAX_PRODUITS], int pNbProduits){
 	String format = "%3d	", formatD;
 
 	//définition du format dynamique
-	sprintf(formatD, "%%%ds	", MAXCHAR - 1, MAXCHAR - 1);
+	// définition du format dynamique pour sscanf
+	sprintf(formatD, "%%%ds	", MAXCELLULES);
 	strcat(format, formatD);
 	strcat(format, formatD);
-	strcat(format, "%f	");
-	strcat(format, formatD);
-	
+	strcat(format, "%.2f	%d \n");
 
 	printf(MESSAGE_PRODUIT_COMMANDE);
 	for (i = 0; i < pNbProduits; i++){
