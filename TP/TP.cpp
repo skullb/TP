@@ -15,6 +15,7 @@
 #define MESSAGE_ERREUR_FICHIER_INNEXISTANT "Le fichier %s n'existe pas\n"
 #define MESSAGE_ERREUR_CLIENT_REQUIS "Vous devez entrer un client d'abord \n"
 #define MESSAGE_ERREUR_FONCTION_INVALIDE "Cette fonction n'existe pas \n"
+#define MESSAGE_ERREUR_PRODUIT_DEPASSEMENT "dépassement capacitée produits"
 
 // messages de saisie
 #define MESSAGE_SAISIE_RECOMMENCER "Recommencer : "
@@ -29,11 +30,11 @@
 #define MESSAGE_PRODUIT_QT_COMMANDE "Quantité à commander:"
 
 // constantes de tableau des produit
-#define CONST_PRODUIT_NO "No du produit"
+#define CONST_PRODUIT_NO "No"
 #define CONST_PRODUIT_MARQUE "Marque"
-#define CONST_PRODUIT_REFERENCE "Reference"
+#define CONST_PRODUIT_REFERENCE "Ref"
 #define CONST_PRODUIT_PRIX "Prix"
-#define CONST_PRODUIT_QUANTITE "Quantite"
+#define CONST_PRODUIT_QUANTITE "Nb"
 #define CONST_PRODUIT_TOTAL "Total"
 
 // Fonctions disponibles
@@ -112,7 +113,8 @@ float saisieFloat();
 *	Fonction de de chargement de la liste des
 *	produits basée sur un fichier texte d'une
 *	certaine structure.
-*
+*	pProduits: pointeur sur la liste des commandes
+*			   et des quantitées
 *	pCheminduFichier: le chemin du fichier des
 *					  produits à charger
 *
@@ -133,6 +135,10 @@ Client *saisieClient();
 *	saisieCommande:
 *	Fonction de saisie de l'operation demandée par
 *	l'utilisateur
+*	pListe: pointeur sur la liste des commandes
+*			   et des quantitées
+*	nbProduits: nombre de produits chargés en
+*				mémoire
 *
 *	Retour: void
 ************************************************/
@@ -143,6 +149,10 @@ void saisieCommande(Produit *pListe[MAX_PRODUITS], int nbProduits);
 *	Fonction de création d'un fichier de facture en html.
 *	pCommande: pointeur sur la liste des commandes
 *			   et des quantitées
+*	pClient: pointeur sur le client qui fait la
+*			 commande
+*	nbProduits: nombre de produits chargés en
+*				mémoire
 *
 *	Retour: void
 ************************************************/
@@ -299,17 +309,22 @@ int chargerProduit(Produit *pProduits[MAX_PRODUITS], Path pCheminDuFichier){
 		fgets(ligne, MAXTEXT, entree);
 		// Lecture du fichier entree ligne par ligne
 		while (!feof(entree)) {
-			pProduits[nbProduits] = (Produit *)malloc(sizeof(Produit));
-			n = sscanf(ligne, "%3d	%s	%s	%f", &pProduits[nbProduits]->noProduit, &pProduits[nbProduits]->marque, &pProduits[nbProduits]->reference, &pProduits[nbProduits]->prix);
-			pProduits[nbProduits]->quantite = 0;
+			// contrôle de dépassement de tableau
+			if (nbProduits > MAX_PRODUITS){
+				printf(MESSAGE_ERREUR_PRODUIT_DEPASSEMENT);
+			} else {
+				pProduits[nbProduits] = (Produit *)malloc(sizeof(Produit));
+				n = sscanf(ligne, "%3d	%s	%s	%f", &pProduits[nbProduits]->noProduit, &pProduits[nbProduits]->marque, &pProduits[nbProduits]->reference, &pProduits[nbProduits]->prix);
+				pProduits[nbProduits]->quantite = 0;
 
-			if (n != 4){
-				printf(MESSAGE_ERREUR_FICHIER_MAL_FORMATE);
+				if (n != 4){
+					printf(MESSAGE_ERREUR_FICHIER_MAL_FORMATE);
+				}
+				// lecture de la ligne suivannte
+				fgets(ligne, MAXTEXT, entree);
+				// incrémentation du nombre de produits
+				nbProduits++;
 			}
-			// lecture de la ligne suivannte
-			fgets(ligne, MAXTEXT, entree);
-			// incrémentation du nombre de produits
-			nbProduits++;
 		}
 	}
 
@@ -377,10 +392,16 @@ void saisieCommande(Produit *pListe[MAX_PRODUITS], int nbProduits){
 /*Fonction printCommande*/
 void printCommande(Produit *ptrProduits[MAX_PRODUITS], int pNbProduits){
 	int i, prixTotal;
+	String format;
+
+	//définition du format dynamique
+	sprintf(format,"%3d	%%%ds	%%%ds	%f %%%dd \n", MAXCHAR-1, MAXCHAR-1, MAXCHAR-1);
+
 	printf(MESSAGE_PRODUIT_COMMANDE);
 	for (i = 0; i < pNbProduits; i++){
+		// seulement si un produit est commandé
 		if (ptrProduits[i]->quantite > 0){
-			printf("%3d	%s	%s	%f %d \n", ptrProduits[i]->noProduit, ptrProduits[i]->marque, ptrProduits[i]->reference, ptrProduits[i]->prix, ptrProduits[i]->quantite);
+			printf(format, ptrProduits[i]->noProduit, ptrProduits[i]->marque, ptrProduits[i]->reference, ptrProduits[i]->prix, ptrProduits[i]->quantite);
 		}
 	}
 	puts("");
