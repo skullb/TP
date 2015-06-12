@@ -364,9 +364,10 @@ int chargerProduit(Produit *pProduits[MAX_PRODUITS], Path pCheminDuFichier){
 
 	fclose(entree);
 
-	// Afficher l'erreur pour le dépassement de tableau
-	// l'erreur n'interompt pas le programme mais signale les lignes
-	// non chargées
+	// Afficher les erreurs diverses selon les problèmes rencontrés
+	// l'erreur n'interompt pas le programme autant que possible
+	// mais signale les lignes non chargées. Seul le fichier innexistant 
+	// est bloquant pour l'application
 	if (erreurChargement || erreurFormat || erreurDepassement) {
 		
 		if (lignesNonChargees[ERREUR_PRODUIT_CHARGEMENT][0] == 1){
@@ -467,10 +468,15 @@ void saisieCommande(Produit *pListe[MAX_PRODUITS], int nbProduits){
 /*Fonction printCommande*/
 void printCommande(Produit *ptrProduits[MAX_PRODUITS], int pNbProduits){
 	int i, prixTotal;
-	String format;
+	String format = "%3d	", formatD;
 
 	//définition du format dynamique
-	sprintf(format,"%3d	%%%ds	%%%ds	%f %%%dd \n", MAXCHAR-1, MAXCHAR-1, MAXCHAR-1);
+	sprintf(formatD, "%%%ds	", MAXCHAR - 1, MAXCHAR - 1);
+	strcat(format, formatD);
+	strcat(format, formatD);
+	strcat(format, "%f	");
+	strcat(format, formatD);
+	
 
 	printf(MESSAGE_PRODUIT_COMMANDE);
 	for (i = 0; i < pNbProduits; i++){
