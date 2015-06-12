@@ -37,7 +37,7 @@
 #define CONST_PRODUIT_TOTAL "Total"
 
 // Fonctions disponibles
-#define MESSAGE_CMD_DISPO "Fonctions disponibles: \n"
+#define MESSAGE_CMD_DISPO "Fonctions disponibles: \n\n"
 #define MESSAGE_CMD0 "Sortir du programme"
 #define MESSAGE_CMD1 "Saisir le nom du client"
 #define MESSAGE_CMD2 "Passer une commande"
@@ -216,11 +216,12 @@ void tableauDeBord(){
 	{
 		switch (cmd){
 		case 1:
+			// saisie du client
 			client = saisieClient();
-			//printf("Client %s %s \n", client->nom, client->prenom);
 			break;
 		case 2:
-			if (NULL != client){				
+			if (NULL != client){	
+				// saisir la commande du client
 				saisieCommande(produits, nbProduits);
 			}
 			else {
@@ -240,14 +241,13 @@ void tableauDeBord(){
 			break;
 		}
 
-		// afficher les commandes disponibles
-		afficherCommandes(cmdDisponibles);
 		// Saisir une nouvelle commande
 		printf(MESSAGE_SAISIE_CMD);
 		cmd = saisieInt();
 	}
 
 	if (nbProduits == 0){
+		// erreur de chargement des produits
 		printf(MESSAGE_ERREUR_CHARGEMENT_PRODUIT);
 	} else {
 		// libérer la mémoire du client
@@ -467,13 +467,13 @@ void creerFacture(Produit *pCommande[MAX_PRODUITS], Client *pClient, int nbProdu
 /* saisie d'entiers*/
 int saisieInt() {
 	int val, n;
-	char ligne[MAXCHAR];
+	char ligne[MAXENTIER];
 
-	fgets(ligne, MAXCHAR, stdin),
+	fgets(ligne, MAXENTIER, stdin),
 		n = sscanf(ligne, "%d", &val);
 	while (n != 1) {
 		printf(MESSAGE_SAISIE_RECOMMENCER);
-		fgets(ligne, MAXCHAR, stdin),
+		fgets(ligne, MAXENTIER, stdin),
 			n = sscanf(ligne, "%d", &val);
 	}
 	return val;
