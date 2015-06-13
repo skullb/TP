@@ -61,7 +61,7 @@
 #define MAX_PROD_CAR 3
 #define MAX_CHAINE 50
 #define MAX_ENTIER 50
-#define MAX_CELL 15
+#define MAX_CELL 10
 #define MAX_TEXT 1000
 #define MAX_PROD 100
 #define MAX_PATH 150
@@ -609,11 +609,11 @@ void imprimerProduits(Produit *ptrProduits[MAX_PROD], int pNbProduits, int pMont
 	String format;
 	String formatEnTete;
 	String formatPied;
-	String formaterEnTete = "%%-%ds	%%-%ds	%%-%ds	%%-%ds	%%-%ds %%-%ds \n";
-	String formaterPied = "%%-%ds	%%-%ds	%%-%ds	%%-%ds	%%-%ds %%-%d.2f \n";
-	String formaterEnTeteSans = "%%-%ds	%%-%ds	%%-%ds	%%-%ds \n";
-	String formatter = "%%-%dd	%%-%ds	%%-%ds	%%-%d.2f		%%-%dd	%%-%d.2f \n";
-	String formatterSans = "%%-%dd	%%-%ds	%%-%ds	%%-%d.2f \n";
+	String formaterEnTete = "%%-%ds %%-%ds %%-%ds %%-%ds %%-%ds %%-%ds\n";
+	String formaterPied = "%%-%ds %%-%ds %%-%ds %%-%ds %%-%ds %%-%d.2f\n";
+	String formaterEnTeteSans = "%%-%ds %%-%ds %%-%ds %%-%ds\n";
+	String formatter = "%%-%dd %%-%ds %%-%ds %%-%d.2f %%-%dd %%-%d.2f\n";
+	String formatterSans = "%%-%dd %%-%ds %%-%ds %%-%d.2f\n";
 
 	//définition du format dynamique
 	if (pMontrerCommandes){
@@ -621,7 +621,7 @@ void imprimerProduits(Produit *ptrProduits[MAX_PROD], int pNbProduits, int pMont
 		// on prend le formatter avec le total et la quantitée
 		sprintf(format, formatter, MAX_PROD_CAR, MAX_CELL, MAX_CELL, MAX_CELL, MAX_CELL, MAX_CELL);
 		sprintf(formatEnTete, formaterEnTete, MAX_PROD_CAR, MAX_CELL, MAX_CELL, MAX_CELL, MAX_CELL, MAX_CELL);
-		sprintf(formatPied, formaterPied, MAX_CELL, MAX_CELL, MAX_CELL, MAX_CELL, MAX_CELL, MAX_CELL);
+		sprintf(formatPied, formaterPied, MAX_CELL, MAX_CELL-(MAX_CELL-MAX_PROD_CAR), MAX_CELL, MAX_CELL, MAX_CELL, MAX_CELL);
 		printf(MSG_PROD_COMMANDE);
 		
 		// En tête pour l'impression avec les commandes
