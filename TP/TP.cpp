@@ -9,77 +9,97 @@
 **************************************************/
 
 // messages d'erreurs
-#define MESSAGE_ERREUR_CHARGEMENT_PRODUIT "Une erreur de chargement c'est produite \n"
-#define MESSAGE_ERREUR_CREATION_FACTURE "Erreur de création du fichier de facture\n"
-#define MESSAGE_ERREUR_FICHIER_MAL_FORMATE "Le fichier est mal formatte"
-#define MESSAGE_ERREUR_FICHIER_INNEXISTANT "Le fichier %s n'existe pas\n"
-#define MESSAGE_ERREUR_CLIENT_REQUIS "Vous devez entrer un client d'abord \n"
-#define MESSAGE_ERREUR_FONCTION_INVALIDE "Cette fonction n'existe pas \n"
-#define MESSAGE_ERREUR_PRODUIT_DEPASSEMENT "Les %d dernières lignes n'ont pas pues etre chargees"
+#define MSG_ERR_CHARGEMENT_PROD "Une erreur de chargement c'est produite \n"
+#define MSG_ERR_CREATION_FACTURE "Erreur de création du fichier de facture\n"
+#define MSG_ERR_FICHIER_MAL_FORMATE "Le fichier de produits est mal formatte.\nles lignes %s n'ont pas pu etre chargees\n"
+#define MSG_ERR_FICHIER_INNEXISTANT "Le fichier %s n'existe pas\n"
+#define MSG_ERR_CLIENT_REQUIS "Vous devez entrer un client d'abord \n"
+#define MSG_ERR_FONCTION_INVALIDE "Cette fonction n'existe pas \n"
+#define MSG_ERR_PROD_DEPASSEMENT "Les lignes %s du fichier de produit\n n'ont pas pu etre chargees\n"
 
 // message d'attention
-#define MESSAGE_ATTENTION_CLIENT_NON_FACTURE "Le client %s %s a effectué une commande.\n Elle n'a cependant pas ete facturee si vous continuez vous ecraserez ces donnees\n"
+#define MSG_ATT_CLIENT_NON_FACTURE "Le client %s %s a effectue une commande.\nElle n'a cependant pas ete facturee.\nSi vous continuez vous ecraserez ces donnees.\n"
 
 // messages de saisie
-#define MESSAGE_SAISIE_RECOMMENCER "Recommencer : "
-#define MESSAGE_SAISIE_CMD "Saisir une commande: "
-#define MESSAGE_SAISIE_NOM_CLIENT "Saisir le nom du client: "
-#define MESSAGE_SAISIE_PRENOM "Saisir le prénom du client: "
-#define MESSAGE_SAISIE_SUR "Etes-vous sur de vouloir continuer(o/n)?\n"
+#define MSG_SAISIE_RECOMMENCER "Recommencer : "
+#define MSG_SAISIE_CMD "Saisir une commande: "
+#define MSG_SAISIE_NOM_CLIENT "Saisir le nom du client: "
+#define MSG_SAISIE_PRENOM "Saisir le prénom du client: "
+#define MSG_SAISIE_SUR "Etes-vous sur de vouloir continuer(o/n)? "
 
 // message concernants le produit
-#define MESSAGE_PRODUIT_NO "Numéro du produit à commander:"
-#define MESSAGE_PRODUIT_COMMANDE "Produits commandes:\n"
-#define MESSGAE_PRODUIT_INNEXISTANT "Ce numéro de produit n'existe pas"
-#define MESSAGE_PRODUIT_QT_COMMANDE "Quantité à commander:"
+#define MSG_PROD_NO "Numéro du produit à commander:"
+#define MSG_PROD_COMMANDE "Produits commandes:\n"
+#define MSG_PROD_INNEXISTANT "Ce numéro de produit n'existe pas"
+#define MSG_PROD_QT_COMMANDE "Quantité à commander:"
+#define MSG_PROD_DISPO "Produits disponibles:\n"
 
 // constantes de tableau des produit
-#define CONST_PRODUIT_NO "No"
-#define CONST_PRODUIT_MARQUE "Marque"
-#define CONST_PRODUIT_REFERENCE "Ref"
-#define CONST_PRODUIT_PRIX "Prix"
-#define CONST_PRODUIT_QUANTITE "Nb"
-#define CONST_PRODUIT_TOTAL "Total"
+#define CONST_PROD_NO "No"
+#define CONST_PROD_MARQUE "Marque"
+#define CONST_PROD_REFERENCE "Ref"
+#define CONST_PROD_PRIX "Prix"
+#define CONST_PROD_QUANTITE "Nb"
+#define CONST_PROD_TOTAL "Total"
+
+#define CONST_CLIENT "Client"
 
 // Fonctions disponibles
-#define MESSAGE_CMD_DISPO "Fonctions disponibles: \n\n"
-#define MESSAGE_CMD0 "Sortir du programme"
-#define MESSAGE_CMD1 "Saisir le nom du client"
-#define MESSAGE_CMD2 "Passer une commande"
-#define MESSAGE_CMD3 "Imprimer la commande"
-#define MESSAGE_CMD4 "Creer la facture"
+#define MSG_CMD_DISPO "Fonctions disponibles: \n\n"
+#define MSG_CMD0 "Sortir du programme"
+#define MSG_CMD1 "Saisir le nom du client"
+#define MSG_CMD2 "Passer une commande"
+#define MSG_CMD3 "Imprimer la commande"
+#define MSG_CMD4 "Creer la facture"
 
 /**************************************************
 *
 *	Déclaration des constantes de configuration
 *
 **************************************************/
-#define FICHE_PRODUITS "produit.txt"
-#define MAX_PRODUIT_NO 3
-#define MAXCHAR 50
-#define MAXENTIER 50
-#define MAXCELLULES 15
-#define MAXTEXT 1000
-#define MAX_PRODUITS 100
-#define MAXPATH 150
+#define FICHE_PROD "produit.txt"
+#define MAX_PROD_CAR 3
+#define MAX_CHAINE 50
+#define MAX_ENTIER 50
+#define MAX_CELL 15
+#define MAX_TEXT 1000
+#define MAX_PROD 100
+#define MAX_PATH 150
 #define NBRCMD 5
 #define VRAI 1
 #define FAUX 0
-#define MAX_PRODUIT_CHARGEMENT_ERREUR 3
-#define ERREUR_PRODUIT_CHARGEMENT 0
-#define ERREUR_PRODUIT_CHARGEMENT_FORMAT 1
-#define ERREUR_PRODUIT_CHARGEMENT_DEPASSEMENT 2
+#define MAX_PROD_CHARGEMENT_ERREUR 3
+#define ERR_PROD_CHARGEMENT 0
+#define ERR_PROD_CHARGEMENT_FORMAT 1
+#define ERR_PROD_CHARGEMENT_DEPASSEMENT 2
 
-/* On définie un type String avec une taille de MAXCHAR */
-typedef char String[MAXCHAR];
+/************************************************
+*	String:
+*	définition d'un type String utilisé pour
+*	toutes les entrées de caractère de taille 50 
+************************************************/
+typedef char String[MAX_CHAINE];
 
-/* On définit un type Text avec une taille de MAXTEXT*/
-typedef char Text[MAXTEXT];
+/************************************************
+*	Text:
+*	définition d'un type Text pour lire les 
+*	lignes d'un fichier 
+************************************************/
+typedef char Text[MAX_TEXT];
 
-/* On définit un type Path pour les chemins de fichiers */
-typedef char Path[MAXPATH];
+/************************************************
+*	Path:
+*	définition d'un type Path utilisé pour
+*	les chemins de fichiers
+************************************************/
+typedef char Path[MAX_PATH];
 
-/* On définit un type Produit */
+/************************************************
+*	Produit:
+*	définition d'un type Produit contenant le
+*	numéro du produit, la marque, la réference,  
+*	le prix et la quatité
+************************************************/
 typedef struct{
 	int noProduit;
 	String marque;
@@ -88,34 +108,39 @@ typedef struct{
 	int quantite;
 } Produit;
 
-/* On définit un type client */
+/************************************************
+*	Client:
+*	Définition du type client contenant le nom et
+*	le prénom du client
+************************************************/
 typedef struct{
 	String nom;
 	String prenom;
 } Client;
 
 /************************************************
-*	saisieInt:
+*	saisieEntier:
 *	Fonction de saisie d'un nombre entier
 *	Retour: l'entier saisie par l'utilisateur
 ************************************************/
-int saisieInt();
+int saisieEntier();
 
 /************************************************
-*	saisieString:
+*	saisieChaine:
 *	Fonction de saisie d'un String d'une taille
-*	de MAXCHAR.
+*	de MAX_CHAINE.
 *	Retour: le String saisie d'une taille de
-*			MAXCHAR
+*			MAX_CHAINE
 ************************************************/
-String *saisieString();
+String *saisieChaine();
 
 /************************************************
-*	saisieCaractere:
-*	Fonction de saisie d'un caractere
-*	Retour: le caractère entré
+*	etesVousSur:
+*	Qui demande si l'utilisateur est sur
+*	de vouloir continuer
+*	Retour: 1 si oui sinon 0
 ************************************************/
-char saisieCaractere();
+int etesVousSur();
 
 /************************************************
 *	chargerProduit:
@@ -136,7 +161,7 @@ char saisieCaractere();
 *	Retour: Un entier du nombre de produits 
 			chargés
 ************************************************/
-int chargerProduit(Produit *pProduits[MAX_PRODUITS], Path pCheminDuFichier);
+int chargerProduit(Produit *pProduits[MAX_PROD], Path pCheminDuFichier);
 
 /************************************************
 *	saisieClient:
@@ -157,7 +182,7 @@ Client *saisieClient();
 *
 *	Retour: void
 ************************************************/
-void saisieCommande(Produit *pListe[MAX_PRODUITS], int nbProduits);
+void saisieCommande(Produit *pListe[MAX_PROD], int nbProduits);
 
 /************************************************
 *	creerFacture:
@@ -171,7 +196,7 @@ void saisieCommande(Produit *pListe[MAX_PRODUITS], int nbProduits);
 *
 *	Retour: void
 ************************************************/
-void creerFacture(Produit *pCommande[MAX_PRODUITS], Client *pClient, int nbProduits);
+void creerFacture(Produit *pCommande[MAX_PROD], Client *pClient, int nbProduits);
 
 /************************************************
 *	tableauDeBord:
@@ -190,8 +215,8 @@ void creerFacture(Produit *pCommande[MAX_PRODUITS], Client *pClient, int nbProdu
 void tableauDeBord();
 
 /************************************************
-*	afficherCommandes:
-*	Fonction d'affichage des commandes mises à
+*	afficherFonctionsDisponibles:
+*	Fonction d'affichage des fonctions mises à
 *	disposition par le programme:
 *	Liste des commandes:
 *		1) Saisir le nom du client
@@ -204,20 +229,22 @@ void tableauDeBord();
 *
 *	Retour: void (affiche en console)
 ************************************************/
-void afficherCommandes(String pCmdDisponibles[NBRCMD]);
+void afficherFonctionsDisponibles(String pCmdDisponibles[NBRCMD]);
 
 /************************************************
-*	printCommande:
-*	Fonction d'affichage des commandes faites
-*	par le client
+*	imprimerProduits:
+*	Fonction d'affichage des produits passés en
+*	paramêtre
 *	ptrProduits: pointeur sur la liste des
 *				 produits avec la quantité
 *	pNbProduits: Nombre de produits
-*
+*	pMontrerCommandes: 1 pour montrer quantité
+*					   et prix et 0 que les 
+*					   produits
 *
 *	Retour: void
 ************************************************/
-void printCommande(Produit *ptrProduits[MAX_PRODUITS], int pNbProduits);
+void imprimerProduits(Produit *ptrProduits[MAX_PROD], int pNbProduits, int pMontrerCommandes);
 
 /************************************************
 *	effacerCommande:
@@ -227,10 +254,9 @@ void printCommande(Produit *ptrProduits[MAX_PRODUITS], int pNbProduits);
 *				 produits avec la quantité
 *	pNbProduits: Nombre de produits
 *
-*
 *	Retour: void
 ************************************************/
-void effacerCommande(Produit *ptrProduits[MAX_PRODUITS], int pNbProduits);
+void effacerCommande(Produit *ptrProduits[MAX_PROD], int pNbProduits);
 
 /*Fonction main*/
 void main() {
@@ -240,24 +266,30 @@ void main() {
 }
 /*Fonction tableauDeBord*/
 void tableauDeBord(){
-	int cmd, commandeEffectuee, commandeFacturee, totalCommande, i, nbProduits = -1, n;
-	String cmdDisponibles[NBRCMD] = { MESSAGE_CMD0, MESSAGE_CMD1, MESSAGE_CMD2, MESSAGE_CMD3, MESSAGE_CMD4 };
-	char etesVousSur;
+	
+	int cmd;
+	int produitsAffiches;
+	int commandeEffectuee;
+	int commandeFacturee;
+	int totalCommande;
+	int i, nbProduits, n;
+	String cmdDisponibles[NBRCMD] = { MSG_CMD0, MSG_CMD1, MSG_CMD2, MSG_CMD3, MSG_CMD4 };
 	Client *client = NULL;
-	Produit *produits[MAX_PRODUITS] = {};
+	Produit *produits[MAX_PROD] = {};
 
+	nbProduits = -1;
 	commandeEffectuee = FAUX;
 	commandeFacturee = FAUX;
 
 	// chargement des produits
-	nbProduits = chargerProduit(produits, FICHE_PRODUITS);
+	nbProduits = chargerProduit(produits, FICHE_PROD);
 
 	// affichage des fonctions disponibles
-	afficherCommandes(cmdDisponibles);
+	afficherFonctionsDisponibles(cmdDisponibles);
 
 	// demander de saisir une fonction
-	printf(MESSAGE_SAISIE_CMD);
-	cmd = saisieInt();
+	printf(MSG_SAISIE_CMD);
+	cmd = saisieEntier();
 
 	// tant que la cmd n'est pas 0 et
 	// que le nombre de produits > 0 on 
@@ -273,6 +305,9 @@ void tableauDeBord(){
 				
 				// saisie du client sans poser de question
 				client = saisieClient();
+
+				// chaque nouveau client on affiche les produits
+				produitsAffiches = FAUX;
 			}
 			else {
 				
@@ -280,13 +315,11 @@ void tableauDeBord(){
 				// car la commande ne peut etre effectuée si le client
 				// est NULL donc seul le cas commande effectuée
 				// et non facturée passera par ici
-				printf(MESSAGE_ATTENTION_CLIENT_NON_FACTURE, client->nom, client->prenom);
-				printf(MESSAGE_SAISIE_SUR);
-				etesVousSur = saisieCaractere();
+				printf(MSG_ATT_CLIENT_NON_FACTURE, client->nom, client->prenom);
 
 				// si la réponse est o ou O on saisie le client
 				// sinon le programme continue
-				if (etesVousSur == 'o' || etesVousSur == 'O'){
+				if (etesVousSur()){
 					
 					// on efface la commande précédente
 					effacerCommande(produits, nbProduits);
@@ -298,19 +331,33 @@ void tableauDeBord(){
 			break;
 		case 2:
 			if (NULL != client){	
-				
+
+				// montrer que la première fois
+				if (!produitsAffiches){
+					// imprimer le nom du client
+					printf("%s: %s %s\n", CONST_CLIENT, client->nom, client->prenom);
+
+					// montrer les produits disponibles
+					imprimerProduits(produits, nbProduits, FAUX);
+
+					// pour ne plus afficher
+					produitsAffiches = VRAI;
+				}
+
 				// saisir la commande du client
 				saisieCommande(produits, nbProduits);
 				commandeEffectuee = VRAI;
 			}
 			else {
-				printf(MESSAGE_ERREUR_CLIENT_REQUIS);
+
+				// affichage de l'erreur
+				printf(MSG_ERR_CLIENT_REQUIS);
 			}
 			break;
 		case 3:
 			
 			// imprimer la commande
-			printCommande(produits, nbProduits);
+			imprimerProduits(produits, nbProduits, VRAI);
 			break;
 		case 4:
 			
@@ -321,19 +368,19 @@ void tableauDeBord(){
 		default:
 
 			// fonction non valide
-			printf(MESSAGE_ERREUR_FONCTION_INVALIDE);
+			printf(MSG_ERR_FONCTION_INVALIDE);
 			break;
 		}
 
 		// Saisir une nouvelle commande
-		printf(MESSAGE_SAISIE_CMD);
-		cmd = saisieInt();
+		printf(MSG_SAISIE_CMD);
+		cmd = saisieEntier();
 	}
 
 	if (nbProduits == 0){
 		
 		// erreur de chargement des produits
-		printf(MESSAGE_ERREUR_CHARGEMENT_PRODUIT);
+		printf(MSG_ERR_CHARGEMENT_PROD);
 	} else {
 		
 		// libérer la mémoire du client
@@ -347,20 +394,20 @@ void tableauDeBord(){
 	}
 }
 
-/* saisieString */
-String *saisieString(){
+/* saisieChaine */
+String *saisieChaine(){
 
 	String val;
 	String ligne;
 	String *pointeur;
 	int n;
 
-	fgets(ligne, MAXCHAR + 1, stdin);
+	fgets(ligne, MAX_CHAINE + 1, stdin);
 	n = sscanf(ligne, "%s", &val);
 
 	while (n != 1) {
-		printf(MESSAGE_SAISIE_RECOMMENCER);
-		fgets(ligne, MAXCHAR + 1, stdin);
+		printf(MSG_SAISIE_RECOMMENCER);
+		fgets(ligne, MAX_CHAINE + 1, stdin);
 		n = sscanf(ligne, "%s", &val);
 	}
 
@@ -371,40 +418,52 @@ String *saisieString(){
 }
 
 /*Fonction chargerProduit*/
-int chargerProduit(Produit *pProduits[MAX_PRODUITS], Path pCheminDuFichier){
+int chargerProduit(Produit *pProduits[MAX_PROD], Path pCheminDuFichier){
+
+	int i, j, n;
+	
+	// pseud booléens
+	int erreurFormat;
+	int erreurDepassement;
+	int erreurChargement;
+
+	// index des erreurs
+	int indexErreurForm = 0; 
+	int indexErreurDep = 0; 
+	int nbProduits = 0;
+	int noLigne = 1;
 
 	FILE *entree;
-	Produit *res;
 	Text ligne;
 	String lignesErr = "";
 	String noLigneErr = "";
 	String separateur = "";
 	String format;
 	String formatter = "%%%dd	%%%ds	%%%ds	%%f";
-	int i,erreurFormat, erreurDepassement, erreurChargement, n, indexErreurForm =0,indexErreurDep = 0, nbProduits = 0;
-	int lignesNonChargees[MAX_PRODUIT_CHARGEMENT_ERREUR][MAX_PRODUITS] = {};
+	
+	int lignesNonChargees[MAX_PROD_CHARGEMENT_ERREUR][100] = {};
 
 	erreurDepassement = FAUX;
 	erreurFormat = FAUX;
 	erreurChargement = FAUX;
 
 	// définition du format dynamique pour sscanf
-	sprintf(format, formatter,MAX_PRODUIT_NO, MAXCHAR-1, MAXCHAR-1);
+	sprintf(format, formatter,MAX_PROD_CAR, MAX_CHAINE-1, MAX_CHAINE-1);
 	
 	// Ouverture des fichiers
 	entree = fopen(pCheminDuFichier, "r");
 	if (entree == NULL) {
 		erreurChargement = VRAI;
-		lignesNonChargees[ERREUR_PRODUIT_CHARGEMENT][0] = 1;
+		lignesNonChargees[ERR_PROD_CHARGEMENT][0] = 1;
 	}
 	else {
-		fgets(ligne, MAXTEXT, entree);
+		fgets(ligne, MAX_TEXT, entree);
 		// Lecture du fichier entree ligne par ligne
 		while (!feof(entree)) {
 			// contrôle de dépassement de tableau
-			if (erreurFormat || nbProduits > MAX_PRODUITS){
-				erreurFormat = VRAI;
-				lignesNonChargees[ERREUR_PRODUIT_CHARGEMENT_DEPASSEMENT] [indexErreurDep] = MAX_PRODUITS+indexErreurDep+1;
+			if (nbProduits > MAX_PROD){
+				erreurDepassement = VRAI;
+				lignesNonChargees[ERR_PROD_CHARGEMENT_DEPASSEMENT] [indexErreurDep] = noLigne;
 				indexErreurDep++;
 
 			} else {
@@ -413,18 +472,19 @@ int chargerProduit(Produit *pProduits[MAX_PRODUITS], Path pCheminDuFichier){
 				pProduits[nbProduits]->quantite = 0;
 
 				if (n != 4){
-					nbProduits = 0;
 					erreurFormat = VRAI;
-					lignesNonChargees[ERREUR_PRODUIT_CHARGEMENT_FORMAT][indexErreurForm] = nbProduits + 1;
+					lignesNonChargees[ERR_PROD_CHARGEMENT_FORMAT][indexErreurForm] = noLigne;
 					indexErreurForm++;
 				}
 				else {
 					// incrémentation du nombre de produits
 					nbProduits++;
 				}
-				// lecture de la ligne suivannte
-				fgets(ligne, MAXTEXT, entree);
 			}
+
+			// lecture de la ligne suivannte
+			fgets(ligne, MAX_TEXT, entree);
+			noLigne++;
 		}
 	}
 
@@ -436,8 +496,8 @@ int chargerProduit(Produit *pProduits[MAX_PRODUITS], Path pCheminDuFichier){
 	// est bloquant pour l'application
 	if (erreurChargement || erreurFormat || erreurDepassement) {
 		
-		if (lignesNonChargees[ERREUR_PRODUIT_CHARGEMENT][0] == 1){
-			printf(MESSAGE_ERREUR_FICHIER_INNEXISTANT);
+		if (lignesNonChargees[ERR_PROD_CHARGEMENT][0] == 1){
+			printf(MSG_ERR_FICHIER_INNEXISTANT);
 		}
 		else {
 			// Si il y a des erreurs de formatage
@@ -445,29 +505,29 @@ int chargerProduit(Produit *pProduits[MAX_PRODUITS], Path pCheminDuFichier){
 				// On itère à quelles lignes
 				// et on concatène en format lisible
 				for (i = 0; i < indexErreurForm; i++){
-					sprintf(noLigneErr, "%d", lignesNonChargees[ERREUR_PRODUIT_CHARGEMENT_FORMAT][i]+1);
+					sprintf(noLigneErr, "%d", lignesNonChargees[ERR_PROD_CHARGEMENT_FORMAT][i]);
 					strcat(lignesErr, separateur);
 					strcat(lignesErr, noLigneErr);
 					strcpy(separateur, ", ");
 				}
 				// On affiche l'erreur avec les lignes auxquels les
 				// erreurs sont détéctées
-				printf(MESSAGE_ERREUR_FICHIER_MAL_FORMATE, lignesErr);
+				printf(MSG_ERR_FICHIER_MAL_FORMATE, lignesErr);
 			}
 
 			// Si il y a dépassement
 			if (indexErreurDep > 0) {
 				// On itère à quelles lignes
 				// et on concatène en format lisible
-				for (i = 0; i < indexErreurDep; i++) {
-					sprintf(noLigneErr, "%d", lignesNonChargees[ERREUR_PRODUIT_CHARGEMENT_DEPASSEMENT][i] + 1);
+				for (j = 0; j < indexErreurDep; j++) {
+					sprintf(noLigneErr, "%d", lignesNonChargees[ERR_PROD_CHARGEMENT_DEPASSEMENT][j]);
 					strcat(lignesErr, separateur);
 					strcat(lignesErr, noLigneErr);
 					strcpy(separateur, ", ");
 				}
 				// On affiche l'erreur avec les lignes auxquels les
 				// erreurs sont détéctées
-				printf(MESSAGE_ERREUR_PRODUIT_DEPASSEMENT, lignesErr);
+				printf(MSG_ERR_PROD_DEPASSEMENT, lignesErr);
 			}
 		}
 	}
@@ -479,12 +539,12 @@ int chargerProduit(Produit *pProduits[MAX_PRODUITS], Path pCheminDuFichier){
 Client *saisieClient(){
 	Client *client = (Client *)malloc(sizeof(Client));
 	String *nom, *prenom;
-	printf(MESSAGE_SAISIE_NOM_CLIENT);
-	nom = saisieString();
+	printf(MSG_SAISIE_NOM_CLIENT);
+	nom = saisieChaine();
 	strcpy(client->nom, *nom);
 	free(nom);
-	printf(MESSAGE_SAISIE_PRENOM);
-	prenom = saisieString();
+	printf(MSG_SAISIE_PRENOM);
+	prenom = saisieChaine();
 	strcpy(client->prenom, *prenom);
 	free(prenom);
 
@@ -492,11 +552,11 @@ Client *saisieClient(){
 }
 
 /*Fonction saisieCommande*/
-void saisieCommande(Produit *pListe[MAX_PRODUITS], int nbProduits){
+void saisieCommande(Produit *pListe[MAX_PROD], int nbProduits){
 	int i, noProduit, qt, trouve = FAUX, index, inventaireQt;
 	index = -1;
-	printf(MESSAGE_PRODUIT_NO);
-	noProduit = saisieInt();
+	printf(MSG_PROD_NO);
+	noProduit = saisieEntier();
 	for (i = 0; i < nbProduits && !trouve; i++){
 		if (pListe[i]->noProduit == noProduit){
 			trouve = VRAI;
@@ -505,9 +565,9 @@ void saisieCommande(Produit *pListe[MAX_PRODUITS], int nbProduits){
 	}
 	while (!trouve)
 	{
-		printf(MESSGAE_PRODUIT_INNEXISTANT);
-		printf(MESSAGE_PRODUIT_NO);
-		noProduit = saisieInt();
+		printf(MSG_PROD_INNEXISTANT);
+		printf(MSG_PROD_NO);
+		noProduit = saisieEntier();
 
 		for (i = 0; i < nbProduits && !trouve; i++){
 			if (pListe[i]->noProduit == noProduit){
@@ -517,8 +577,8 @@ void saisieCommande(Produit *pListe[MAX_PRODUITS], int nbProduits){
 		}
 	}
 
-	printf(MESSAGE_PRODUIT_QT_COMMANDE);
-	qt = saisieInt();
+	printf(MSG_PROD_QT_COMMANDE);
+	qt = saisieEntier();
 
 	if (index > -1){
 		inventaireQt = pListe[index]->quantite + qt;
@@ -531,27 +591,64 @@ void saisieCommande(Produit *pListe[MAX_PRODUITS], int nbProduits){
 	}
 }
 
-/*Fonction printCommande*/
-void printCommande(Produit *ptrProduits[MAX_PRODUITS], int pNbProduits){
-	int i, prixTotal;
+/*Fonction imprimerProduits*/
+void imprimerProduits(Produit *ptrProduits[MAX_PROD], int pNbProduits, int pMontrerCommandes){
+	int i;
+	float prixTotal = 0, sousTotal = 0;
 	String format;
-	String formatter = "%%%dd	%%-%ds	%%-%ds	%%%d.2f	%%%dd \n";
+	String formatEnTete;
+	String formatPied;
+	String formaterEnTete = "%%-%ds	%%-%ds	%%-%ds	%%-%ds	%%-%ds %%-%ds \n";
+	String formaterPied = "%%-%ds	%%-%ds	%%-%ds	%%-%ds	%%-%ds %%-%d.2f \n";
+	String formaterEnTeteSans = "%%-%ds	%%-%ds	%%-%ds	%%-%ds \n";
+	String formatter = "%%-%dd	%%-%ds	%%-%ds	%%-%d.2f		%%-%dd	%%-%d.2f \n";
+	String formatterSans = "%%-%dd	%%-%ds	%%-%ds	%%-%d.2f \n";
 
 	//définition du format dynamique
-	sprintf(format, formatter, MAX_PRODUIT_NO, MAXCELLULES, MAXCELLULES, MAXCELLULES, MAXCELLULES);
+	if (pMontrerCommandes){
+		// on prend le formatter avec le total et la quantitée
+		sprintf(format, formatter, MAX_PROD_CAR, MAX_CELL, MAX_CELL, MAX_CELL, MAX_CELL, MAX_CELL);
+		sprintf(formatEnTete, formaterEnTete, MAX_PROD_CAR, MAX_CELL, MAX_CELL, MAX_CELL, MAX_CELL, MAX_CELL);
+		sprintf(formatPied, formaterPied, MAX_CELL, MAX_CELL, MAX_CELL, MAX_CELL, MAX_CELL, MAX_CELL);
+		printf(MSG_PROD_COMMANDE);
+		// En tête pour l'impression avec les commandes
+		printf(formatEnTete, CONST_PROD_NO, CONST_PROD_MARQUE, CONST_PROD_REFERENCE, CONST_PROD_PRIX, CONST_PROD_QUANTITE, CONST_PROD_TOTAL);
+	}
+	else {
+		// sinon on montre que les produits
+		sprintf(format, formatterSans, MAX_PROD_CAR, MAX_CELL, MAX_CELL, MAX_CELL);
+		sprintf(formatEnTete, formaterEnTeteSans, MAX_PROD_CAR, MAX_CELL, MAX_CELL, MAX_CELL);
+		printf(MSG_PROD_DISPO);
+		// En tête pour l'impression sans les commandes
+		printf(formatEnTete, CONST_PROD_NO, CONST_PROD_MARQUE, CONST_PROD_REFERENCE, CONST_PROD_PRIX);
+	}
 	
-	printf(MESSAGE_PRODUIT_COMMANDE);
+	
 	for (i = 0; i < pNbProduits; i++){
-		// seulement si un produit est commandé
-		if (ptrProduits[i]->quantite > 0){
-			printf(format, ptrProduits[i]->noProduit, ptrProduits[i]->marque, ptrProduits[i]->reference, ptrProduits[i]->prix, ptrProduits[i]->quantite);
+		// cas ou on veut montrer les commandes
+		if (pMontrerCommandes){
+			// seulement si un produit est commandé
+			if (ptrProduits[i]->quantite > 0){
+				sousTotal = ptrProduits[i]->quantite * ptrProduits[i]->prix;
+				prixTotal += sousTotal;
+				printf(format, ptrProduits[i]->noProduit, ptrProduits[i]->marque, ptrProduits[i]->reference, ptrProduits[i]->prix, ptrProduits[i]->quantite, sousTotal);
+			}
+		}
+		else {
+			printf(format, ptrProduits[i]->noProduit, ptrProduits[i]->marque, ptrProduits[i]->reference, ptrProduits[i]->prix);
 		}
 	}
+
+	// si on montre la commande on ajoute la ligne total
+	if (pMontrerCommandes){
+		printf(formatPied, CONST_PROD_TOTAL, "", "", "", "", prixTotal);
+	}
+
 	puts("");
 }
 
 /*Fonction creerFacture*/
-void creerFacture(Produit *pCommande[MAX_PRODUITS], Client *pClient, int nbProduits){
+void creerFacture(Produit *pCommande[MAX_PROD], Client *pClient, int nbProduits){
 	Path facture;
 	String nomPrenom;
 	FILE *out;
@@ -572,7 +669,7 @@ void creerFacture(Produit *pCommande[MAX_PRODUITS], Client *pClient, int nbProdu
 	out = fopen(facture, "w");
 
 	if (NULL == out){
-		printf(MESSAGE_ERREUR_CREATION_FACTURE);
+		printf(MSG_ERR_CREATION_FACTURE);
 	} else {
 		
 		fprintf(out,"<html>\n");
@@ -585,11 +682,11 @@ void creerFacture(Produit *pCommande[MAX_PRODUITS], Client *pClient, int nbProdu
 		// le header du tableau
 		fprintf(out, "\t\t<table border=\"1px\">\n");
 		fprintf(out, "\t\t\t<tr bgcolor=\"yellow\">\n");
-		fprintf(out, "\t\t\t\t<th>%s</th>\n", CONST_PRODUIT_NO);
-		fprintf(out, "\t\t\t\t<th>%s</th>\n", CONST_PRODUIT_MARQUE);
-		fprintf(out, "\t\t\t\t<th>%s</th>\n", CONST_PRODUIT_REFERENCE);
-		fprintf(out, "\t\t\t\t<th>%s</th>\n",CONST_PRODUIT_QUANTITE);
-		fprintf(out, "\t\t\t\t<th>%s</th>\n", CONST_PRODUIT_PRIX);
+		fprintf(out, "\t\t\t\t<th>%s</th>\n", CONST_PROD_NO);
+		fprintf(out, "\t\t\t\t<th>%s</th>\n", CONST_PROD_MARQUE);
+		fprintf(out, "\t\t\t\t<th>%s</th>\n", CONST_PROD_REFERENCE);
+		fprintf(out, "\t\t\t\t<th>%s</th>\n",CONST_PROD_QUANTITE);
+		fprintf(out, "\t\t\t\t<th>%s</th>\n", CONST_PROD_PRIX);
 		fprintf(out, "\t\t\t</tr>\n");
 		
 		// itération sur les produits
@@ -614,7 +711,7 @@ void creerFacture(Produit *pCommande[MAX_PRODUITS], Client *pClient, int nbProdu
 
 		// ajout du pieds avec le total
 		fprintf(out, "\t\t\t<tr>\n");
-		fprintf(out, "\t\t\t\t<td>%s</td>\n", CONST_PRODUIT_TOTAL);
+		fprintf(out, "\t\t\t\t<td>%s</td>\n", CONST_PROD_TOTAL);
 		fprintf(out, "\t\t\t\t<td></td>\n");
 		fprintf(out, "\t\t\t\t<td></td>\n");
 		fprintf(out, "\t\t\t\t<td></td>\n");
@@ -629,47 +726,50 @@ void creerFacture(Produit *pCommande[MAX_PRODUITS], Client *pClient, int nbProdu
 }
 
 /* saisie d'entiers*/
-int saisieInt() {
+int saisieEntier() {
 	int val, n;
-	char ligne[MAXENTIER];
+	char ligne[MAX_ENTIER];
 
-	fgets(ligne, MAXENTIER, stdin),
+	fgets(ligne, MAX_ENTIER, stdin),
 		n = sscanf(ligne, "%d", &val);
 	while (n != 1) {
-		printf(MESSAGE_SAISIE_RECOMMENCER);
-		fgets(ligne, MAXENTIER, stdin),
+		printf(MSG_SAISIE_RECOMMENCER);
+		fgets(ligne, MAX_ENTIER, stdin),
 			n = sscanf(ligne, "%d", &val);
 	}
 	return val;
 }
 
 /* Fonction afficherCommande */
-void afficherCommandes(String pCmdDisponibles[NBRCMD]){
+void afficherFonctionsDisponibles(String pCmdDisponibles[NBRCMD]){
 	int i;
 	int sousTotal = 0;
-	printf(MESSAGE_CMD_DISPO);
+	printf(MSG_CMD_DISPO);
 	for (i = 0; i < NBRCMD; i++){
 		printf("\t%1d) %s \n", i,pCmdDisponibles[i]);
 	}
 	puts("");
 }
 
-char saisieCaractere() {
-	int n;
+/* Fonction etesVousSur */
+int etesVousSur() {
+	int sur = FAUX;
 	char saisie;
-	n = scanf("%c", &saisie);
-	while (n !=1)
-	{
-		// supprimer les car parasites
-		while (getchar() != '\n'); 
-		// redemander
-		printf(MESSAGE_SAISIE_RECOMMENCER);
-		n = scanf("%c", &saisie);
+	
+	printf(MSG_SAISIE_SUR);
+	saisie = getchar();
+	if (saisie == 'o' || saisie == 'O'){
+		sur = VRAI;
 	}
-	return saisie;
+
+	// enlever les caractères parasites
+	while (getchar() != '\n');
+
+	return sur;
 }
 
-void effacerCommande(Produit *ptrProduits[MAX_PRODUITS], int pNbProduits) {
+/* Fonction effacerCommande */
+void effacerCommande(Produit *ptrProduits[MAX_PROD], int pNbProduits) {
 	int i;
 	for (i = 0; i < pNbProduits; i++){
 		if (ptrProduits[i]->quantite > 0){
