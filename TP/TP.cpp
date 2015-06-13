@@ -17,11 +17,15 @@
 #define MESSAGE_ERREUR_FONCTION_INVALIDE "Cette fonction n'existe pas \n"
 #define MESSAGE_ERREUR_PRODUIT_DEPASSEMENT "Les %d dernières lignes n'ont pas pues etre chargees"
 
+// message d'attention
+#define MESSAGE_ATTENTION_CLIENT_NON_FACTURE "Le client %s %s a effectué une commande.\n Elle n'a cependant pas ete facturee si vous continuez vous ecraserez ces donnees\n"
+
 // messages de saisie
 #define MESSAGE_SAISIE_RECOMMENCER "Recommencer : "
 #define MESSAGE_SAISIE_CMD "Saisir une commande: "
 #define MESSAGE_SAISIE_NOM_CLIENT "Saisir le nom du client: "
 #define MESSAGE_SAISIE_PRENOM "Saisir le prénom du client: "
+#define MESSAGE_SAISIE_SUR "Etes-vous sur de vouloir continuer(o/n)?\n"
 
 // message concernants le produit
 #define MESSAGE_PRODUIT_NO "Numéro du produit à commander:"
@@ -51,6 +55,7 @@
 *
 **************************************************/
 #define FICHE_PRODUITS "produit.txt"
+#define MAX_PRODUIT_NO 3
 #define MAXCHAR 50
 #define MAXENTIER 50
 #define MAXCELLULES 15
@@ -106,12 +111,11 @@ int saisieInt();
 String *saisieString();
 
 /************************************************
-*	saisieFloat:
-*	Fonction de saisie d'un nombre flottant
-*	Retour: le nombre flottant saisie par
-*   INUTILE
+*	saisieCaractere:
+*	Fonction de saisie d'un caractere
+*	Retour: le caractère entré
 ************************************************/
-float saisieFloat();
+char saisieCaractere();
 
 /************************************************
 *	chargerProduit:
@@ -215,49 +219,108 @@ void afficherCommandes(String pCmdDisponibles[NBRCMD]);
 ************************************************/
 void printCommande(Produit *ptrProduits[MAX_PRODUITS], int pNbProduits);
 
+/************************************************
+*	effacerCommande:
+*	Fonction qui parcours les produit et 
+*	remet à 0 les quantités différentes de 0
+*	ptrProduits: pointeur sur la liste des
+*				 produits avec la quantité
+*	pNbProduits: Nombre de produits
+*
+*
+*	Retour: void
+************************************************/
+void effacerCommande(Produit *ptrProduits[MAX_PRODUITS], int pNbProduits);
+
 /*Fonction main*/
 void main() {
+	
 	// lancement de l'application
 	tableauDeBord();
 }
 /*Fonction tableauDeBord*/
 void tableauDeBord(){
-	int cmd, totalCommande, i, nbProduits = -1;
+	int cmd, commandeEffectuee, commandeFacturee, totalCommande, i, nbProduits = -1, n;
 	String cmdDisponibles[NBRCMD] = { MESSAGE_CMD0, MESSAGE_CMD1, MESSAGE_CMD2, MESSAGE_CMD3, MESSAGE_CMD4 };
+	char etesVousSur;
 	Client *client = NULL;
 	Produit *produits[MAX_PRODUITS] = {};
+
+	commandeEffectuee = FAUX;
+	commandeFacturee = FAUX;
+
 	// chargement des produits
 	nbProduits = chargerProduit(produits, FICHE_PRODUITS);
 
+	// affichage des fonctions disponibles
 	afficherCommandes(cmdDisponibles);
+
+	// demander de saisir une fonction
 	printf(MESSAGE_SAISIE_CMD);
 	cmd = saisieInt();
 
+	// tant que la cmd n'est pas 0 et
+	// que le nombre de produits > 0 on 
+	// boucle
 	while (cmd != 0 && nbProduits > 0)
 	{
 		switch (cmd){
 		case 1:
-			// saisie du client
-			client = saisieClient();
+			
+			// si le client n'est pas saisie ou qu'aucune commande n'est efféctuée
+			// ou que la commande précédent est facturée
+			if (client == NULL || !commandeEffectuee || commandeFacturee){
+				
+				// saisie du client sans poser de question
+				client = saisieClient();
+			}
+			else {
+				
+				// le traitement des autres cas n'es pas utile
+				// car la commande ne peut etre effectuée si le client
+				// est NULL donc seul le cas commande effectuée
+				// et non facturée passera par ici
+				printf(MESSAGE_ATTENTION_CLIENT_NON_FACTURE, client->nom, client->prenom);
+				printf(MESSAGE_SAISIE_SUR);
+				etesVousSur = saisieCaractere();
+
+				// si la réponse est o ou O on saisie le client
+				// sinon le programme continue
+				if (etesVousSur == 'o' || etesVousSur == 'O'){
+					
+					// on efface la commande précédente
+					effacerCommande(produits, nbProduits);
+					
+					// on demande la saisie du client
+					client = saisieClient();
+				}
+			}
 			break;
 		case 2:
 			if (NULL != client){	
+				
 				// saisir la commande du client
 				saisieCommande(produits, nbProduits);
+				commandeEffectuee = VRAI;
 			}
 			else {
 				printf(MESSAGE_ERREUR_CLIENT_REQUIS);
 			}
 			break;
 		case 3:
+			
 			// imprimer la commande
 			printCommande(produits, nbProduits);
 			break;
 		case 4:
+			
 			// créer un fichier de factures
 			creerFacture(produits, client, nbProduits);
+			commandeFacturee = VRAI;
 			break;
 		default:
+
+			// fonction non valide
 			printf(MESSAGE_ERREUR_FONCTION_INVALIDE);
 			break;
 		}
@@ -268,11 +331,14 @@ void tableauDeBord(){
 	}
 
 	if (nbProduits == 0){
+		
 		// erreur de chargement des produits
 		printf(MESSAGE_ERREUR_CHARGEMENT_PRODUIT);
 	} else {
+		
 		// libérer la mémoire du client
 		free(client);
+		
 		// libérer les produits
 		nbProduits = sizeof(produits) / sizeof(Produit);
 		for (i = 0; i < nbProduits; i++) {
@@ -313,8 +379,8 @@ int chargerProduit(Produit *pProduits[MAX_PRODUITS], Path pCheminDuFichier){
 	String lignesErr = "";
 	String noLigneErr = "";
 	String separateur = "";
-	String formatD;
-	String format="%3d	";
+	String format;
+	String formatter = "%%%dd	%%%ds	%%%ds	%%f";
 	int i,erreurFormat, erreurDepassement, erreurChargement, n, indexErreurForm =0,indexErreurDep = 0, nbProduits = 0;
 	int lignesNonChargees[MAX_PRODUIT_CHARGEMENT_ERREUR][MAX_PRODUITS] = {};
 
@@ -323,9 +389,7 @@ int chargerProduit(Produit *pProduits[MAX_PRODUITS], Path pCheminDuFichier){
 	erreurChargement = FAUX;
 
 	// définition du format dynamique pour sscanf
-	sprintf(formatD, "%%%ds	%%%ds", MAXCHAR-1, MAXCHAR-1);
-	strcat(format, formatD);
-	strcat(format, "	%f");
+	sprintf(format, formatter,MAX_PRODUIT_NO, MAXCHAR-1, MAXCHAR-1);
 	
 	// Ouverture des fichiers
 	entree = fopen(pCheminDuFichier, "r");
@@ -340,7 +404,8 @@ int chargerProduit(Produit *pProduits[MAX_PRODUITS], Path pCheminDuFichier){
 			// contrôle de dépassement de tableau
 			if (erreurFormat || nbProduits > MAX_PRODUITS){
 				erreurFormat = VRAI;
-				lignesNonChargees[ERREUR_PRODUIT_CHARGEMENT_DEPASSEMENT] [indexErreurDep] = nbProduits + 1;
+				lignesNonChargees[ERREUR_PRODUIT_CHARGEMENT_DEPASSEMENT] [indexErreurDep] = MAX_PRODUITS+indexErreurDep+1;
+				indexErreurDep++;
 
 			} else {
 				pProduits[nbProduits] = (Produit *)malloc(sizeof(Produit));
@@ -469,15 +534,12 @@ void saisieCommande(Produit *pListe[MAX_PRODUITS], int nbProduits){
 /*Fonction printCommande*/
 void printCommande(Produit *ptrProduits[MAX_PRODUITS], int pNbProduits){
 	int i, prixTotal;
-	String format = "%3d	", formatD;
+	String format;
+	String formatter = "%%%dd	%%-%ds	%%-%ds	%%%d.2f	%%%dd \n";
 
 	//définition du format dynamique
-	// définition du format dynamique pour sscanf
-	sprintf(formatD, "%%%ds	", MAXCELLULES);
-	strcat(format, formatD);
-	strcat(format, formatD);
-	strcat(format, "%.2f	%d \n");
-
+	sprintf(format, formatter, MAX_PRODUIT_NO, MAXCELLULES, MAXCELLULES, MAXCELLULES, MAXCELLULES);
+	
 	printf(MESSAGE_PRODUIT_COMMANDE);
 	for (i = 0; i < pNbProduits; i++){
 		// seulement si un produit est commandé
@@ -590,4 +652,28 @@ void afficherCommandes(String pCmdDisponibles[NBRCMD]){
 		printf("\t%1d) %s \n", i,pCmdDisponibles[i]);
 	}
 	puts("");
+}
+
+char saisieCaractere() {
+	int n;
+	char saisie;
+	n = scanf("%c", &saisie);
+	while (n !=1)
+	{
+		// supprimer les car parasites
+		while (getchar() != '\n'); 
+		// redemander
+		printf(MESSAGE_SAISIE_RECOMMENCER);
+		n = scanf("%c", &saisie);
+	}
+	return saisie;
+}
+
+void effacerCommande(Produit *ptrProduits[MAX_PRODUITS], int pNbProduits) {
+	int i;
+	for (i = 0; i < pNbProduits; i++){
+		if (ptrProduits[i]->quantite > 0){
+			ptrProduits[i]->quantite = 0;
+		}
+	}
 }
