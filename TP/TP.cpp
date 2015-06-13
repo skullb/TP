@@ -458,10 +458,21 @@ int chargerProduit(Produit *pProduits[MAX_PROD], Path pCheminDuFichier){
 	}
 	else {
 		fgets(ligne, MAX_TEXT, entree);
+		
 		// Lecture du fichier entree ligne par ligne
 		while (!feof(entree)) {
+
 			// contrôle de dépassement de tableau
-			if (nbProduits > MAX_PROD){
+			if (erreurDepassement || nbProduits > MAX_PROD){
+				
+				// première erreur de dépassement
+				// il faut ajuster nbProduits
+				if (noLigne == nbProduits+1){
+					
+					// nbProduit est faux il faut le décrémenter
+					nbProduits--;
+				}
+
 				erreurDepassement = VRAI;
 				lignesNonChargees[ERR_PROD_CHARGEMENT_DEPASSEMENT] [indexErreurDep] = noLigne;
 				indexErreurDep++;
@@ -606,27 +617,33 @@ void imprimerProduits(Produit *ptrProduits[MAX_PROD], int pNbProduits, int pMont
 
 	//définition du format dynamique
 	if (pMontrerCommandes){
+		
 		// on prend le formatter avec le total et la quantitée
 		sprintf(format, formatter, MAX_PROD_CAR, MAX_CELL, MAX_CELL, MAX_CELL, MAX_CELL, MAX_CELL);
 		sprintf(formatEnTete, formaterEnTete, MAX_PROD_CAR, MAX_CELL, MAX_CELL, MAX_CELL, MAX_CELL, MAX_CELL);
 		sprintf(formatPied, formaterPied, MAX_CELL, MAX_CELL, MAX_CELL, MAX_CELL, MAX_CELL, MAX_CELL);
 		printf(MSG_PROD_COMMANDE);
+		
 		// En tête pour l'impression avec les commandes
 		printf(formatEnTete, CONST_PROD_NO, CONST_PROD_MARQUE, CONST_PROD_REFERENCE, CONST_PROD_PRIX, CONST_PROD_QUANTITE, CONST_PROD_TOTAL);
 	}
 	else {
+		
 		// sinon on montre que les produits
 		sprintf(format, formatterSans, MAX_PROD_CAR, MAX_CELL, MAX_CELL, MAX_CELL);
 		sprintf(formatEnTete, formaterEnTeteSans, MAX_PROD_CAR, MAX_CELL, MAX_CELL, MAX_CELL);
 		printf(MSG_PROD_DISPO);
+		
 		// En tête pour l'impression sans les commandes
 		printf(formatEnTete, CONST_PROD_NO, CONST_PROD_MARQUE, CONST_PROD_REFERENCE, CONST_PROD_PRIX);
 	}
 	
 	
 	for (i = 0; i < pNbProduits; i++){
+		
 		// cas ou on veut montrer les commandes
 		if (pMontrerCommandes){
+			
 			// seulement si un produit est commandé
 			if (ptrProduits[i]->quantite > 0){
 				sousTotal = ptrProduits[i]->quantite * ptrProduits[i]->prix;
@@ -674,10 +691,12 @@ void creerFacture(Produit *pCommande[MAX_PROD], Client *pClient, int nbProduits)
 		
 		fprintf(out,"<html>\n");
 		fprintf(out, "\t<head>\n");
+		
 		// titre de la page
 		fprintf(out, "\t\t<title>%s</title>\n", nomPrenom);
 		fprintf(out, "\t</head>\n");
 		fprintf(out, "\t<body>\n");
+		
 		// création de la table avec 
 		// le header du tableau
 		fprintf(out, "\t\t<table border=\"1px\">\n");
@@ -695,16 +714,18 @@ void creerFacture(Produit *pCommande[MAX_PROD], Client *pClient, int nbProduits)
 			// afficher que ceux dont la quantité est
 			// supérieure à 0
 			if (pCommande[i]->quantite > 0){
+				
 				// calcul du sous total et total
 				subTotal = pCommande[i]->quantite * pCommande[i]->prix;
 				total += subTotal;
+				
 				// création des lignes du  tableau
 				fprintf(out, "\t\t\t<tr>\n");
 				fprintf(out, "\t\t\t\t<td>%d</td>\n", &pCommande[i]->noProduit);
 				fprintf(out, "\t\t\t\t<td>%s</td>\n", &pCommande[i]->marque);
 				fprintf(out, "\t\t\t\t<td>%s</td>\n", &pCommande[i]->reference);
 				fprintf(out, "\t\t\t\t<td>%d</td>\n", &pCommande[i]->quantite);
-				fprintf(out, "\t\t\t\t<td>%f</td>\n", subTotal);
+				fprintf(out, "\t\t\t\t<td>%.2f</td>\n", subTotal);
 				fprintf(out, "\t\t\t</tr>\n");
 			}
 		}
@@ -715,12 +736,13 @@ void creerFacture(Produit *pCommande[MAX_PROD], Client *pClient, int nbProduits)
 		fprintf(out, "\t\t\t\t<td></td>\n");
 		fprintf(out, "\t\t\t\t<td></td>\n");
 		fprintf(out, "\t\t\t\t<td></td>\n");
-		fprintf(out, "\t\t\t\t<td>%f</td>\n", total);
+		fprintf(out, "\t\t\t\t<td>%.2f</td>\n", total);
 		fprintf(out, "\t\t\t</tr>\n");
 		fprintf(out, "\t\t</table>\n");
 		fprintf(out, "\t</body>\n");
 		fprintf(out, "</html>\n");
 	}
+	
 	// sauver dans le fichier
 	fclose(out);
 }
