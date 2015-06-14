@@ -33,6 +33,7 @@
 #define MSG_PROD_INNEXISTANT "Ce numéro de produit n'existe pas"
 #define MSG_PROD_QT_COMMANDE "Quantité à commander:"
 #define MSG_PROD_DISPO "Produits disponibles:\n"
+#define MSG_PROD_COMMANDE_DET "Commande de %d %s %s, prix unitaire : %.2f FS, prix total ; %.2f FS\n"
 
 // constantes de tableau des produit
 #define CONST_PROD_NO "No"
@@ -41,7 +42,7 @@
 #define CONST_PROD_PRIX "Prix"
 #define CONST_PROD_QUANTITE "Nb"
 #define CONST_PROD_TOTAL "Total"
-
+#define CONST_SEPARATEUR "-"
 #define CONST_CLIENT "Client"
 
 // Fonctions disponibles
@@ -63,7 +64,7 @@
 #define MAX_ENTIER 50
 #define MAX_CELL 10
 #define MAX_TEXT 1000
-#define MAX_PROD 100
+#define MAX_PROD 10
 #define MAX_PATH 150
 #define NBRCMD 5
 #define VRAI 1
@@ -450,8 +451,9 @@ int chargerProduit(Produit *pProduits[MAX_PROD], Path pCheminDuFichier){
 
 	// index des erreurs
 	int indexErreurForm = 0; 
-	int indexErreurDep = 0; 
-	int nbProduits = 0;
+	int indexErreurDep = 0;
+	int indexProduit = 0;
+	int nbProduits = 1;
 	int noLigne = 1;
 
 	FILE *entree;
@@ -484,11 +486,11 @@ int chargerProduit(Produit *pProduits[MAX_PROD], Path pCheminDuFichier){
 		while (!feof(entree)) {
 
 			// contrôle de dépassement de tableau
-			if (erreurDepassement || nbProduits > MAX_PROD){
+			if (erreurDepassement || noLigne > MAX_PROD){
 				
 				// première erreur de dépassement
 				// il faut ajuster nbProduits
-				if (noLigne == nbProduits+1){
+				if (noLigne == nbProduits){
 					
 					// nbProduit est faux il faut le décrémenter
 					nbProduits--;
@@ -499,9 +501,11 @@ int chargerProduit(Produit *pProduits[MAX_PROD], Path pCheminDuFichier){
 				indexErreurDep++;
 
 			} else {
-				pProduits[nbProduits] = (Produit *)malloc(sizeof(Produit));
-				n = sscanf(ligne, format, &pProduits[nbProduits]->noProduit, &pProduits[nbProduits]->marque, &pProduits[nbProduits]->reference, &pProduits[nbProduits]->prix);
-				pProduits[nbProduits]->quantite = 0;
+				pProduits[indexProduit] = (Produit *)malloc(sizeof(Produit));
+				n = sscanf(ligne, format, &pProduits[indexProduit]->noProduit,
+					&pProduits[indexProduit]->marque, &pProduits[indexProduit]->reference,
+					&pProduits[indexProduit]->prix);
+				pProduits[indexProduit]->quantite = 0;
 
 				if (n != 4){
 					erreurFormat = VRAI;
@@ -511,6 +515,9 @@ int chargerProduit(Produit *pProduits[MAX_PROD], Path pCheminDuFichier){
 				else {
 					// incrémentation du nombre de produits
 					nbProduits++;
+
+					// incrémenter l'index de produit
+					indexProduit++;
 				}
 			}
 
@@ -586,6 +593,7 @@ Client *saisieClient(){
 /*Fonction saisieCommande*/
 void saisieCommande(Produit *pListe[MAX_PROD], int nbProduits){
 	int i, noProduit, qt, trouve = FAUX, index, inventaireQt;
+	float total;
 	index = -1;
 	printf(MSG_PROD_NO);
 	noProduit = saisieEntier();
@@ -621,12 +629,19 @@ void saisieCommande(Produit *pListe[MAX_PROD], int nbProduits){
 			pListe[index]->quantite = inventaireQt;
 		}
 	}
+
+	// calculer le total
+	total = pListe[index]->quantite * pListe[index]->prix;
+
+	printf(MSG_PROD_COMMANDE_DET, pListe[index]->quantite,
+		pListe[index]->marque, pListe[index]->reference, pListe[index]->prix, total);
 }
 
 /*Fonction imprimerProduits*/
 void imprimerProduits(Produit *ptrProduits[MAX_PROD], int pNbProduits, int pMontrerCommandes){
-	int i;
+	int i, j, tailleSepar;
 	float prixTotal = 0, sousTotal = 0;
+	String separator = "";
 	String format;
 	String formatEnTete;
 	String formatPied;
@@ -640,13 +655,17 @@ void imprimerProduits(Produit *ptrProduits[MAX_PROD], int pNbProduits, int pMont
 	if (pMontrerCommandes){
 		
 		// on prend le formatter avec le total et la quantitée
-		sprintf(format, formatter, MAX_PROD_CAR, MAX_CELL, MAX_CELL, MAX_CELL, MAX_CELL, MAX_CELL);
-		sprintf(formatEnTete, formaterEnTete, MAX_PROD_CAR, MAX_CELL, MAX_CELL, MAX_CELL, MAX_CELL, MAX_CELL);
-		sprintf(formatPied, formaterPied, MAX_CELL, MAX_CELL-(MAX_CELL-MAX_PROD_CAR), MAX_CELL, MAX_CELL, MAX_CELL, MAX_CELL);
+		sprintf(format, formatter, MAX_PROD_CAR, MAX_CELL, MAX_CELL,
+			MAX_CELL, MAX_CELL, MAX_CELL);
+		sprintf(formatEnTete, formaterEnTete, MAX_PROD_CAR, MAX_CELL,
+			MAX_CELL, MAX_CELL, MAX_CELL, MAX_CELL);
+		sprintf(formatPied, formaterPied, MAX_CELL, MAX_CELL-(MAX_CELL-MAX_PROD_CAR),
+			MAX_CELL, MAX_CELL, MAX_CELL, MAX_CELL);
 		printf(MSG_PROD_COMMANDE);
 		
 		// En tête pour l'impression avec les commandes
-		printf(formatEnTete, CONST_PROD_NO, CONST_PROD_MARQUE, CONST_PROD_REFERENCE, CONST_PROD_PRIX, CONST_PROD_QUANTITE, CONST_PROD_TOTAL);
+		printf(formatEnTete, CONST_PROD_NO, CONST_PROD_MARQUE, CONST_PROD_REFERENCE,
+			CONST_PROD_PRIX, CONST_PROD_QUANTITE, CONST_PROD_TOTAL);
 	}
 	else {
 		
@@ -656,7 +675,8 @@ void imprimerProduits(Produit *ptrProduits[MAX_PROD], int pNbProduits, int pMont
 		printf(MSG_PROD_DISPO);
 		
 		// En tête pour l'impression sans les commandes
-		printf(formatEnTete, CONST_PROD_NO, CONST_PROD_MARQUE, CONST_PROD_REFERENCE, CONST_PROD_PRIX);
+		printf(formatEnTete, CONST_PROD_NO, CONST_PROD_MARQUE, CONST_PROD_REFERENCE,
+			CONST_PROD_PRIX);
 	}
 	
 	
@@ -669,16 +689,27 @@ void imprimerProduits(Produit *ptrProduits[MAX_PROD], int pNbProduits, int pMont
 			if (ptrProduits[i]->quantite > 0){
 				sousTotal = ptrProduits[i]->quantite * ptrProduits[i]->prix;
 				prixTotal += sousTotal;
-				printf(format, ptrProduits[i]->noProduit, ptrProduits[i]->marque, ptrProduits[i]->reference, ptrProduits[i]->prix, ptrProduits[i]->quantite, sousTotal);
+				printf(format, ptrProduits[i]->noProduit, ptrProduits[i]->marque,
+					ptrProduits[i]->reference, ptrProduits[i]->prix,
+					ptrProduits[i]->quantite, sousTotal);
 			}
 		}
 		else {
-			printf(format, ptrProduits[i]->noProduit, ptrProduits[i]->marque, ptrProduits[i]->reference, ptrProduits[i]->prix);
+			printf(format, ptrProduits[i]->noProduit, ptrProduits[i]->marque,
+				ptrProduits[i]->reference, ptrProduits[i]->prix);
 		}
 	}
 
 	// si on montre la commande on ajoute la ligne total
 	if (pMontrerCommandes){
+		
+		// calculer la taille du tableau
+		tailleSepar = MAX_PROD_CAR + (5 * MAX_CELL) + 1;
+		for (j = 0; j < tailleSepar; j++){
+			strcat(separator, CONST_SEPARATEUR);
+		}
+
+		printf(separator);
 		printf(formatPied, CONST_PROD_TOTAL, "", "", "", "", prixTotal);
 	}
 
@@ -780,6 +811,7 @@ int saisieEntier() {
 		fgets(ligne, MAX_ENTIER, stdin),
 			n = sscanf(ligne, "%d", &val);
 	}
+	puts("");
 	return val;
 }
 
