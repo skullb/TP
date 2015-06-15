@@ -773,10 +773,10 @@ void creerFacture(Produit *pCommande[MAX_PROD], Client *pClient, int nbProduits)
 				
 				// création des lignes du  tableau
 				fprintf(out, "\t\t\t<tr>\n");
-				fprintf(out, "\t\t\t\t<td>%d</td>\n", pCommande[i]->noProduit);
+				fprintf(out, "\t\t\t\t<td>%d</td>\n", &pCommande[i]->noProduit);
 				fprintf(out, "\t\t\t\t<td>%s</td>\n", &pCommande[i]->marque);
 				fprintf(out, "\t\t\t\t<td>%s</td>\n", &pCommande[i]->reference);
-				fprintf(out, "\t\t\t\t<td>%d</td>\n", pCommande[i]->quantite);
+				fprintf(out, "\t\t\t\t<td>%d</td>\n", &pCommande[i]->quantite);
 				fprintf(out, "\t\t\t\t<td>%.2f</td>\n", subTotal);
 				fprintf(out, "\t\t\t</tr>\n");
 			}
