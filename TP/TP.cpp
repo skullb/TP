@@ -11,7 +11,7 @@
 // messages d'erreurs
 #define MSG_ERR_CHARGEMENT_PROD "Une erreur de chargement c'est produite \n"
 #define MSG_ERR_CREATION_FACTURE "Erreur de création du fichier de facture\n"
-#define MSG_ERR_FICHIER_MAL_FORMATE "Le fichier de produits est mal formatte.\nLes lignes %s n'ont pas pu etre chargees\n"
+#define MSG_ERR_FICHIER_MAL_FORMATE "Le fichier de produits est mal formatte.\nles lignes %s n'ont pas pu etre chargees\n"
 #define MSG_ERR_FICHIER_INNEXISTANT "Le fichier %s n'existe pas\n"
 #define MSG_ERR_CLIENT_REQUIS "Vous devez entrer un client d'abord \n"
 #define MSG_ERR_FONCTION_INVALIDE "Cette fonction n'existe pas \n"
@@ -273,13 +273,12 @@ void tableauDeBord(){
 	int commandeEffectuee;
 	int commandeFacturee;
 	int totalCommande;
-	int i, nbProduits, n, initialiser;
+	int i, nbProduits, n;
 	String cmdDisponibles[NBRCMD] = { MSG_CMD0, MSG_CMD1, MSG_CMD2, MSG_CMD3, MSG_CMD4 };
 	Client *client = NULL;
 	Produit *produits[MAX_PROD] = {};
 
 	nbProduits = -1;
-	initialiser = FAUX;
 	commandeEffectuee = FAUX;
 	commandeFacturee = FAUX;
 
@@ -298,25 +297,6 @@ void tableauDeBord(){
 	// boucle
 	while (cmd != 0 && nbProduits > 0)
 	{
-		if (!initialiser){
-			
-			if (commandeEffectuee || commandeFacturee){
-				// on efface la commande précédente
-				effacerCommande(produits, nbProduits);
-			}
-			// chaque nouveau client on veux afficher les produits
-			produitsAffiches = FAUX;
-
-			// réinitialiser la commandeEffectuée à FAUX
-			commandeEffectuee = FAUX;
-
-			// réinitialiser la commande facturée
-			commandeFacturee = FAUX;
-
-			// l'application est réinitialisée
-			initialiser = VRAI;
-		}
-
 		switch (cmd){
 		case 1:
 			
@@ -327,8 +307,8 @@ void tableauDeBord(){
 				// saisie du client sans poser de question
 				client = saisieClient();
 
-				// réinitialiser
-				initialiser = FAUX;
+				// chaque nouveau client on affiche les produits
+				produitsAffiches = FAUX;
 			}
 			else {
 				
@@ -342,11 +322,11 @@ void tableauDeBord(){
 				// sinon le programme continue
 				if (etesVousSur()){
 					
+					// on efface la commande précédente
+					effacerCommande(produits, nbProduits);
+					
 					// on demande la saisie du client
 					client = saisieClient();
-
-					// réinitialiser
-					initialiser = FAUX;
 				}
 			}
 			break;
@@ -355,7 +335,6 @@ void tableauDeBord(){
 
 				// montrer que la première fois
 				if (!produitsAffiches){
-					
 					// imprimer le nom du client
 					printf("%s: %s %s\n", CONST_CLIENT, client->nom, client->prenom);
 
