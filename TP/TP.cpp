@@ -431,8 +431,7 @@ int chargerProduit(Produit *pProduits[MAX_PROD], Path pCheminDuFichier){
 	// index des erreurs
 	int indexErreurForm = 0; 
 	int indexErreurDep = 0;
-	int indexProduit = 0;
-	int nbProduits = 1;
+	int nbProduits = 0;
 	int noLigne = 1;
 
 	FILE *entree;
@@ -480,11 +479,11 @@ int chargerProduit(Produit *pProduits[MAX_PROD], Path pCheminDuFichier){
 				indexErreurDep++;
 
 			} else {
-				pProduits[indexProduit] = (Produit *)malloc(sizeof(Produit));
-				n = sscanf(ligne, format, &pProduits[indexProduit]->noProduit,
-					&pProduits[indexProduit]->marque, &pProduits[indexProduit]->reference,
-					&pProduits[indexProduit]->prix);
-				pProduits[indexProduit]->quantite = 0;
+				pProduits[nbProduits] = (Produit *)malloc(sizeof(Produit));
+				n = sscanf(ligne, format, &pProduits[nbProduits]->noProduit,
+					&pProduits[nbProduits]->marque, &pProduits[nbProduits]->reference,
+					&pProduits[nbProduits]->prix);
+				pProduits[nbProduits]->quantite = 0;
 
 				if (n != 4){
 					erreurFormat = VRAI;
@@ -494,9 +493,6 @@ int chargerProduit(Produit *pProduits[MAX_PROD], Path pCheminDuFichier){
 				else {
 					// incrémentation du nombre de produits
 					nbProduits++;
-
-					// incrémenter l'index de produit
-					indexProduit++;
 				}
 			}
 
