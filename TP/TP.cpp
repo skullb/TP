@@ -34,6 +34,7 @@
 #define MSG_PROD_QT_COMMANDE "Quantité à commander:"
 #define MSG_PROD_DISPO "Produits disponibles:\n"
 #define MSG_PROD_COMMANDE_DET "Commande de %d %s %s, prix unitaire : %.2f FS, prix total ; %.2f FS\n"
+#define MSG_PROD_COMMANDE_DET_ANNULE "La commande de %s %s est annulee\n" 
 
 // constantes de tableau des produit
 #define CONST_PROD_NO "No"
@@ -44,6 +45,7 @@
 #define CONST_PROD_TOTAL "Total"
 #define CONST_SEPARATEUR "-"
 #define CONST_CLIENT "Client"
+#define CONST_FACTURE_DE "Facture de"
 
 // Fonctions disponibles
 #define MSG_CMD_DISPO "Fonctions disponibles: \n\n"
@@ -626,25 +628,30 @@ void saisieCommande(Produit *pListe[MAX_PROD], int nbProduits){
 		}
 	}
 
-	// calculer le total
-	total = pListe[index]->quantite * pListe[index]->prix;
-
-	printf(MSG_PROD_COMMANDE_DET, pListe[index]->quantite,
-		pListe[index]->marque, pListe[index]->reference, pListe[index]->prix, total);
+	// Si la quantité est sup à 0
+	if (0 < pListe[index]->quantite){
+		// calculer le total
+		total = pListe[index]->quantite * pListe[index]->prix;
+		printf(MSG_PROD_COMMANDE_DET, pListe[index]->quantite,
+			pListe[index]->marque, pListe[index]->reference, pListe[index]->prix, total);
+	}
+	else {
+		printf(MSG_PROD_COMMANDE_DET_ANNULE, pListe[index]->marque, pListe[index]->reference);
+	}
 }
 
 /*Fonction imprimerProduits*/
 void imprimerProduits(Produit *ptrProduits[MAX_PROD], int pNbProduits, int pMontrerCommandes){
 	int i, j, tailleSepar;
 	float prixTotal = 0, sousTotal = 0;
-	String separator = "";
+	char *separator;
 	String format;
 	String formatEnTete;
 	String formatPied;
 	String formaterEnTete = "%%-%ds %%-%ds %%-%ds %%-%ds %%-%ds %%-%ds\n";
-	String formaterPied = "%%-%ds %%-%ds %%-%ds %%-%ds %%-%ds %%-%d.2f\n";
+	String formaterPied = "%%-%ds %%-%ds %%-%ds %%-%ds %%-%ds %%%d.2f\n";
 	String formaterEnTeteSans = "%%-%ds %%-%ds %%-%ds %%-%ds\n";
-	String formatter = "%%-%dd %%-%ds %%-%ds %%-%d.2f %%-%dd %%-%d.2f\n";
+	String formatter = "%%-%dd %%-%ds %%-%ds %%-%d.2f %%-%dd %%%d.2f\n";
 	String formatterSans = "%%-%dd %%-%ds %%-%ds %%-%d.2f\n";
 
 	//définition du format dynamique
@@ -699,14 +706,23 @@ void imprimerProduits(Produit *ptrProduits[MAX_PROD], int pNbProduits, int pMont
 	// si on montre la commande on ajoute la ligne total
 	if (pMontrerCommandes){
 		
-		// calculer la taille du tableau
-		tailleSepar = MAX_PROD_CAR + (5 * MAX_CELL) + 1;
-		for (j = 0; j < tailleSepar; j++){
-			strcat(separator, CONST_SEPARATEUR);
-		}
+		// calculer la taille du tableau + 5 espaces
+		tailleSepar = MAX_PROD_CAR + (5 * MAX_CELL)+5;
 
-		printf(separator);
+		// calcul de la taille du séparateur
+		separator = (char *) malloc(tailleSepar+1);
+
+		// contrôler que malloc soit différent de NULL
+		if (NULL != separator){
+			for (j = 0; j < (tailleSepar); j++){
+				strcpy(&separator[j], CONST_SEPARATEUR);
+			}
+
+			printf("%s\n",separator);
+			free(separator);
+		}
 		printf(formatPied, CONST_PROD_TOTAL, "", "", "", "", prixTotal);
+		
 	}
 
 	puts("");
@@ -744,6 +760,9 @@ void creerFacture(Produit *pCommande[MAX_PROD], Client *pClient, int nbProduits)
 		fprintf(out, "\t\t<title>%s</title>\n", nomPrenom);
 		fprintf(out, "\t</head>\n");
 		fprintf(out, "\t<body>\n");
+
+		// Ajout du nom du client
+		fprintf(out, "\t\t<h1>%s %s %s</h1>", CONST_FACTURE_DE, pClient->nom, pClient->prenom);
 		
 		// création de la table avec 
 		// le header du tableau
