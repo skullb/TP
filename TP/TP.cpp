@@ -266,6 +266,7 @@ void main() {
 	
 	// lancement de l'application
 	tableauDeBord();
+	system("Pause");
 }
 /*Fonction tableauDeBord*/
 void tableauDeBord(){
@@ -288,125 +289,120 @@ void tableauDeBord(){
 	// chargement des produits
 	nbProduits = chargerProduit(produits, FICHE_PROD);
 
-	// affichage des fonctions disponibles
-	afficherFonctionsDisponibles(cmdDisponibles);
+	//le nombre de produits > 0 
+	if (nbProduits > 0){
 
-	// demander de saisir une fonction
-	printf(MSG_SAISIE_CMD);
-	cmd = saisieEntier();
+		// affichage des fonctions disponibles
+		afficherFonctionsDisponibles(cmdDisponibles);
 
-	// tant que la cmd n'est pas 0 et
-	// que le nombre de produits > 0 on 
-	// boucle
-	while (cmd != 0 && nbProduits > 0)
-	{
-		if (!initialiser){
+		// demander de saisir une fonction
+		printf(MSG_SAISIE_CMD);
+		cmd = saisieEntier();
+
+		// tant que la cmd n'est pas 0 
+		while (cmd != 0)
+		{
+			if (!initialiser){
 			
-			if (commandeEffectuee || commandeFacturee){
-				// on efface la commande précédente
-				effacerCommande(produits, nbProduits);
+				if (commandeEffectuee || commandeFacturee){
+					// on efface la commande précédente
+					effacerCommande(produits, nbProduits);
+				}
+				// chaque nouveau client on veux afficher les produits
+				produitsAffiches = FAUX;
+
+				// réinitialiser la commandeEffectuée à FAUX
+				commandeEffectuee = FAUX;
+
+				// réinitialiser la commande facturée
+				commandeFacturee = FAUX;
+
+				// l'application est réinitialisée
+				initialiser = VRAI;
 			}
-			// chaque nouveau client on veux afficher les produits
-			produitsAffiches = FAUX;
 
-			// réinitialiser la commandeEffectuée à FAUX
-			commandeEffectuee = FAUX;
-
-			// réinitialiser la commande facturée
-			commandeFacturee = FAUX;
-
-			// l'application est réinitialisée
-			initialiser = VRAI;
-		}
-
-		switch (cmd){
-		case 1:
+			switch (cmd){
+			case 1:
 			
-			// si le client n'est pas saisie ou qu'aucune commande n'est efféctuée
-			// ou que la commande précédent est facturée
-			if (client == NULL || !commandeEffectuee || commandeFacturee){
+				// si le client n'est pas saisie ou qu'aucune commande n'est efféctuée
+				// ou que la commande précédent est facturée
+				if (client == NULL || !commandeEffectuee || commandeFacturee){
 				
-				// saisie du client sans poser de question
-				client = saisieClient();
-
-				// réinitialiser
-				initialiser = FAUX;
-			}
-			else {
-				
-				// le traitement des autres cas n'es pas utile
-				// car la commande ne peut etre effectuée si le client
-				// est NULL donc seul le cas commande effectuée
-				// et non facturée passera par ici
-				printf(MSG_ATT_CLIENT_NON_FACTURE, client->nom, client->prenom);
-
-				// si la réponse est o ou O on saisie le client
-				// sinon le programme continue
-				if (etesVousSur()){
-					
-					// on demande la saisie du client
+					// saisie du client sans poser de question
 					client = saisieClient();
 
 					// réinitialiser
 					initialiser = FAUX;
 				}
-			}
-			break;
-		case 2:
-			if (NULL != client){	
+				else {
+				
+					// le traitement des autres cas n'es pas utile
+					// car la commande ne peut etre effectuée si le client
+					// est NULL donc seul le cas commande effectuée
+					// et non facturée passera par ici
+					printf(MSG_ATT_CLIENT_NON_FACTURE, client->nom, client->prenom);
 
-				// montrer que la première fois
-				if (!produitsAffiches){
+					// si la réponse est o ou O on saisie le client
+					// sinon le programme continue
+					if (etesVousSur()){
 					
-					// imprimer le nom du client
-					printf("%s: %s %s\n", CONST_CLIENT, client->nom, client->prenom);
+						// on demande la saisie du client
+						client = saisieClient();
 
-					// montrer les produits disponibles
-					imprimerProduits(produits, nbProduits, FAUX);
-
-					// pour ne plus afficher
-					produitsAffiches = VRAI;
+						// réinitialiser
+						initialiser = FAUX;
+					}
 				}
+				break;
+			case 2:
+				if (NULL != client){	
 
-				// saisir la commande du client
-				saisieCommande(produits, nbProduits);
-				commandeEffectuee = VRAI;
-			}
-			else {
+					// montrer que la première fois
+					if (!produitsAffiches){
+					
+						// imprimer le nom du client
+						printf("%s: %s %s\n", CONST_CLIENT, client->nom, client->prenom);
 
-				// affichage de l'erreur
-				printf(MSG_ERR_CLIENT_REQUIS);
-			}
-			break;
-		case 3:
+						// montrer les produits disponibles
+						imprimerProduits(produits, nbProduits, FAUX);
+
+						// pour ne plus afficher
+						produitsAffiches = VRAI;
+					}
+
+					// saisir la commande du client
+					saisieCommande(produits, nbProduits);
+					commandeEffectuee = VRAI;
+				}
+				else {
+
+					// affichage de l'erreur
+					printf(MSG_ERR_CLIENT_REQUIS);
+				}
+				break;
+			case 3:
 			
-			// imprimer la commande
-			imprimerProduits(produits, nbProduits, VRAI);
-			break;
-		case 4:
+				// imprimer la commande
+				imprimerProduits(produits, nbProduits, VRAI);
+				break;
+			case 4:
 			
-			// créer un fichier de factures
-			creerFacture(produits, client, nbProduits);
-			commandeFacturee = VRAI;
-			break;
-		default:
+				// créer un fichier de factures
+				creerFacture(produits, client, nbProduits);
+				commandeFacturee = VRAI;
+				break;
+			default:
 
-			// fonction non valide
-			printf(MSG_ERR_FONCTION_INVALIDE);
-			break;
+				// fonction non valide
+				printf(MSG_ERR_FONCTION_INVALIDE);
+				break;
+			}
+
+			// Saisir une nouvelle commande
+			printf(MSG_SAISIE_CMD);
+			cmd = saisieEntier();
 		}
 
-		// Saisir une nouvelle commande
-		printf(MSG_SAISIE_CMD);
-		cmd = saisieEntier();
-	}
-
-	if (nbProduits == 0){
-		
-		// erreur de chargement des produits
-		printf(MSG_ERR_CHARGEMENT_PROD);
-	} else {
-		
 		// libérer la mémoire du client
 		free(client);
 		
@@ -414,7 +410,12 @@ void tableauDeBord(){
 		nbProduits = sizeof(produits) / sizeof(Produit);
 		for (i = 0; i < nbProduits; i++) {
 			free(produits[i]);
-		}
+		}	
+	}
+	else {
+
+		// erreur de chargement des produits
+		printf(MSG_ERR_CHARGEMENT_PROD);
 	}
 }
 
@@ -523,9 +524,11 @@ int chargerProduit(Produit *pProduits[MAX_PROD], Path pCheminDuFichier){
 			fgets(ligne, MAX_TEXT, entree);
 			noLigne++;
 		}
+
+		fclose(entree);
 	}
 
-	fclose(entree);
+	
 
 	// Afficher les erreurs diverses selon les problèmes rencontrés
 	// l'erreur n'interompt pas le programme autant que possible
@@ -534,7 +537,7 @@ int chargerProduit(Produit *pProduits[MAX_PROD], Path pCheminDuFichier){
 	if (erreurChargement || erreurFormat || erreurDepassement) {
 		
 		if (lignesNonChargees[ERR_PROD_CHARGEMENT][0] == 1){
-			printf(MSG_ERR_FICHIER_INNEXISTANT);
+			printf(MSG_ERR_FICHIER_INNEXISTANT, pCheminDuFichier);
 		}
 		else {
 			// Si il y a des erreurs de formatage
