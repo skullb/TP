@@ -267,6 +267,34 @@ void imprimerProduits(Produit *ptrProduits[MAX_PROD], int pNbProduits, int pMont
 ************************************************/
 void effacerCommande(Produit *ptrProduits[MAX_PROD], int pNbProduits);
 
+/************************************************
+*	trouveProduit:
+*	Fonction qui parcours les produit et
+*	retourne l'index du produit si le produit 
+*	est trouvé
+*	pNoProduit : Le numéro du prduit cherché
+*	ptrProduits: pointeur sur la liste des
+*				 produits avec la quantité
+*	pNbProduits: Nombre de produits
+*
+*	Retour: -1 si produit non trouvé sinon 
+*			son index
+************************************************/
+int trouveProduit(int pNoProduit, Produit *ptrProduits[MAX_PROD], int pNbProduits);
+
+/************************************************
+*	contientProduit:
+*	Fonction qui parcours les produit et
+*	retourne VRAI si il y a une commande
+*	ptrProduits: pointeur sur la liste des
+*				 produits avec la quantité
+*	pNbProduits: Nombre de produits
+*
+*	Retour: 1 si produit trouvé sinon 
+*			son 0
+************************************************/
+int contientCommande(Produit *ptrProduits[MAX_PROD], int pNbProduits);
+
 /*Fonction main*/
 void main() {
 	
@@ -381,12 +409,7 @@ void tableauDeBord(){
 
 					// si et seulement si des produits sont 
 					// commandés on affecte vrai à commandeEffectuee
-					commandeEffectuee = FAUX;
-					for (i = 0; i < nbProduits && !commandeEffectuee; i++){
-						if (produits[i]->quantite > 0){
-							commandeEffectuee = VRAI;
-						}
-					}
+					commandeEffectuee = contientCommande(produits, nbProduits);
 				}
 				else {
 
@@ -677,24 +700,15 @@ void saisieCommande(Produit *pListe[MAX_PROD], int nbProduits){
 	index = -1;
 	printf(MSG_PROD_NO);
 	noProduit = saisieEntier();
-	for (i = 0; i < nbProduits && !trouve; i++){
-		if (pListe[i]->noProduit == noProduit){
-			trouve = VRAI;
-			index = i;
-		}
-	}
-	while (!trouve)
+
+	index = trouveProduit(noProduit, pListe, nbProduits);
+	
+	while (index < 0)
 	{
 		printf(MSG_PROD_INNEXISTANT);
 		printf(MSG_PROD_NO);
 		noProduit = saisieEntier();
-
-		for (i = 0; i < nbProduits && !trouve; i++){
-			if (pListe[i]->noProduit == noProduit){
-				trouve = VRAI;
-				index = i;
-			}
-		}
+		index = trouveProduit(noProduit, pListe, nbProduits);
 	}
 
 	printf(MSG_PROD_QT_COMMANDE);
@@ -948,4 +962,33 @@ void effacerCommande(Produit *ptrProduits[MAX_PROD], int pNbProduits) {
 			ptrProduits[i]->quantite = 0;
 		}
 	}
+}
+
+/* Fonction trouveProduit */
+int trouveProduit(int pNoProduit, Produit *ptrProduits[MAX_PROD], int pNbProduits){
+	int index = -1;
+	int trouve = FAUX;
+	int i;
+
+	for (i = 0; i < pNbProduits && !trouve; i++){
+		if (ptrProduits[i]->noProduit == pNoProduit){
+			trouve = VRAI;
+			index = i;
+		}
+	}
+	return index;
+}
+
+/* Fonction contientCommande*/
+int contientCommande(Produit *ptrProduits[MAX_PROD], int pNbProduits){
+	int commandeEffectuee = FAUX;
+	int i;
+
+	for (i = 0; i < pNbProduits && !commandeEffectuee; i++){
+		if (ptrProduits[i]->quantite > 0){
+			commandeEffectuee = VRAI;
+		}
+	}
+
+	return commandeEffectuee;
 }
