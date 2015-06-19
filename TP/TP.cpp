@@ -32,7 +32,7 @@
 // Messages concernant le produit
 #define MSG_PROD_NO "Numero du produit a commander:"
 #define MSG_PROD_COMMANDE "Produits commandes:\n"
-#define MSG_PROD_INNEXISTANT "Ce numero de produit n'existe pas"
+#define MSG_PROD_INNEXISTANT "Ce numero de produit n'existe pas\n"
 #define MSG_PROD_QT_COMMANDE "Quantite a commander:"
 #define MSG_PROD_DISPO "Produits disponibles:\n"
 #define MSG_PROD_COMMANDE_DET "Commande de %d %s %s, prix unitaire : %.2f FS, prix total ; %.2f FS\n"
@@ -381,7 +381,8 @@ void tableauDeBord(){
 
 					// si et seulement si des produits sont 
 					// commandés on affecte vrai à commandeEffectuee
-					for (i = 0; i < nbProduits && !commandeEffectuee; i++){
+					commandeEffectuee = FAUX;
+					for (i = 0; i < nbProduits; i++){
 						if (produits[i]->quantite > 0){
 							commandeEffectuee = VRAI;
 						}
