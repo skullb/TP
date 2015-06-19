@@ -537,12 +537,15 @@ int chargerProduit(Produit *pProduits[MAX_PROD], Path pCheminDuFichier){
 		while (!feof(entree)) {
 
 			// contrôle de dépassement de tableau
-			if (erreurDepassement || nbProduits == (MAX_PROD+1)){
+			if (erreurDepassement || nbProduits == MAX_PROD){
 				
 				// première erreur de dépassement
 				// il faut ajuster nbProduits
-				if (nbProduits == MAX_PROD){
+				if (!erreurDepassement){
 					
+					// ajuster nbProduits
+					nbProduits = nbProduits - 1;
+
 					// il y a une erreur de dépassement
 					erreurDepassement = VRAI;
 				}
@@ -622,6 +625,9 @@ int chargerProduit(Produit *pProduits[MAX_PROD], Path pCheminDuFichier){
 			}
 		}
 	}
+
+	// car jusqu'ici c'était l'index
+	nbProduits = nbProduits + 1;
 
 	return nbProduits;
 }
