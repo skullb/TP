@@ -8,35 +8,35 @@
 *
 **************************************************/
 
-// messages d'erreurs
-#define MSG_ERR_CHARGEMENT_PROD "Une erreur de chargement c'est produite \n"
-#define MSG_ERR_CREATION_FACTURE "Erreur de création du fichier de facture\n"
-#define MSG_ERR_FICHIER_MAL_FORMATE "Le fichier de produits est mal formatte.\nLes lignes %s n'ont pas pu etre chargees\n"
+// Messages d'erreurs
+#define MSG_ERR_CHARGEMENT_PROD "Une erreur de chargement s'est produite \n"
+#define MSG_ERR_CREATION_FACTURE "Erreur de creation du fichier de facture\n"
+#define MSG_ERR_FICHIER_MAL_FORMATE "Le fichier de produits est mal formate.\nLes lignes %s n'ont pas pu etre chargees\n"
 #define MSG_ERR_FICHIER_INNEXISTANT "Le fichier %s n'existe pas\n"
 #define MSG_ERR_CLIENT_REQUIS "Vous devez entrer un client d'abord \n"
 #define MSG_ERR_FONCTION_INVALIDE "Cette fonction n'existe pas \n"
 #define MSG_ERR_PROD_DEPASSEMENT "Les lignes %s du fichier de produit\n n'ont pas pu etre chargees\n"
 
-// message d'attention
+// Message d'attention
 #define MSG_ATT_CLIENT_NON_FACTURE "Le client %s %s a effectue une commande.\nElle n'a cependant pas ete facturee.\nSi vous continuez vous ecraserez ces donnees.\n"
 
-// messages de saisie
+// Messages de saisie
 #define MSG_SAISIE_RECOMMENCER "Recommencer : "
 #define MSG_SAISIE_CMD "Saisir une commande: "
 #define MSG_SAISIE_NOM_CLIENT "Saisir le nom du client: "
-#define MSG_SAISIE_PRENOM "Saisir le prénom du client: "
+#define MSG_SAISIE_PRENOM "Saisir le prenom du client: "
 #define MSG_SAISIE_SUR "Etes-vous sur de vouloir continuer(o/n)? "
 
-// message concernants le produit
-#define MSG_PROD_NO "Numéro du produit à commander:"
+// Messages concernant le produit
+#define MSG_PROD_NO "Numero du produit a commander:"
 #define MSG_PROD_COMMANDE "Produits commandes:\n"
-#define MSG_PROD_INNEXISTANT "Ce numéro de produit n'existe pas"
-#define MSG_PROD_QT_COMMANDE "Quantité à commander:"
+#define MSG_PROD_INNEXISTANT "Ce numero de produit n'existe pas"
+#define MSG_PROD_QT_COMMANDE "Quantite a commander:"
 #define MSG_PROD_DISPO "Produits disponibles:\n"
 #define MSG_PROD_COMMANDE_DET "Commande de %d %s %s, prix unitaire : %.2f FS, prix total ; %.2f FS\n"
 #define MSG_PROD_COMMANDE_DET_ANNULE "La commande de %s %s est annulee\n" 
 
-// constantes de tableau des produit
+// Constantes de tableau des produits
 #define CONST_PROD_NO "No"
 #define CONST_PROD_MARQUE "Marque"
 #define CONST_PROD_REFERENCE "Ref"
@@ -78,28 +78,28 @@
 
 /************************************************
 *	String:
-*	définition d'un type String utilisé pour
+*	Définition d'un type String utilisé pour
 *	toutes les entrées de caractère de taille 50 
 ************************************************/
 typedef char String[MAX_CHAINE];
 
 /************************************************
 *	Text:
-*	définition d'un type Text pour lire les 
+*	Définition d'un type Text pour lire les 
 *	lignes d'un fichier 
 ************************************************/
 typedef char Text[MAX_TEXT];
 
 /************************************************
 *	Path:
-*	définition d'un type Path utilisé pour
+*	Définition d'un type Path utilisé pour
 *	les chemins de fichiers
 ************************************************/
 typedef char Path[MAX_PATH];
 
 /************************************************
 *	Produit:
-*	définition d'un type Produit contenant le
+*	Définition d'un type Produit contenant le
 *	numéro du produit, la marque, la réference,  
 *	le prix et la quatité
 ************************************************/
@@ -147,7 +147,7 @@ int etesVousSur();
 
 /************************************************
 *	chargerProduit:
-*	Fonction de de chargement de la liste des
+*	Fonction de chargement de la liste des
 *	produits basée sur un fichier texte d'une
 *	certaine structure.
 *	pProduits: pointeur sur la liste des commandes
@@ -381,15 +381,20 @@ void tableauDeBord(){
 				}
 				break;
 			case 3:
-			
 				// imprimer la commande
 				imprimerProduits(produits, nbProduits, VRAI);
 				break;
 			case 4:
-			
+				if (NULL != client){
 				// créer un fichier de factures
 				creerFacture(produits, client, nbProduits);
 				commandeFacturee = VRAI;
+				}
+				else{
+
+					// affichage de l'erreur
+					printf(MSG_ERR_CLIENT_REQUIS);
+				}
 				break;
 			default:
 
@@ -447,7 +452,7 @@ int chargerProduit(Produit *pProduits[MAX_PROD], Path pCheminDuFichier){
 
 	int i, j, n;
 	
-	// pseud booléens
+	// pseudo booléens
 	int erreurFormat;
 	int erreurDepassement;
 	int erreurChargement;
@@ -520,7 +525,7 @@ int chargerProduit(Produit *pProduits[MAX_PROD], Path pCheminDuFichier){
 				}
 			}
 
-			// lecture de la ligne suivannte
+			// lecture de la ligne suivante
 			fgets(ligne, MAX_TEXT, entree);
 			noLigne++;
 		}
