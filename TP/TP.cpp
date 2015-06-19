@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 
 /**************************************************
 *
@@ -16,6 +17,7 @@
 #define MSG_ERR_CLIENT_REQUIS "Vous devez entrer un client d'abord \n"
 #define MSG_ERR_FONCTION_INVALIDE "Cette fonction n'existe pas \n"
 #define MSG_ERR_PROD_DEPASSEMENT "Les lignes %s du fichier de produit\n n'ont pas pu etre chargees\n"
+#define MSG_ERR_COMMANDE_REQUISE "Une commande doit etre effectuee pour etre affichee\n"
 
 // Message d'attention
 #define MSG_ATT_CLIENT_NON_FACTURE "Le client %s %s a effectue une commande.\nElle n'a cependant pas ete facturee.\nSi vous continuez vous ecraserez ces donnees.\n"
@@ -131,7 +133,11 @@ int saisieEntier();
 /************************************************
 *	saisieChaine:
 *	Fonction de saisie d'un String d'une taille
-*	de MAX_CHAINE.
+*	de MAX_CHAINE. Avec un filtre de caractères
+*	pour couper dès l'entrée d'un chiffre ou
+*	autres caractères ne faisant pas partie
+*	de la classe [a-zA-z ] les espaces sont
+*	autorisés.
 *	Retour: le String saisie d'une taille de
 *			MAX_CHAINE
 ************************************************/
@@ -372,7 +378,14 @@ void tableauDeBord(){
 
 					// saisir la commande du client
 					saisieCommande(produits, nbProduits);
-					commandeEffectuee = VRAI;
+
+					// si et seulement si des produits sont 
+					// commandés on affecte vrai à commandeEffectuee
+					for (i = 0; i < nbProduits && !commandeEffectuee; i++){
+						if (produits[i]->quantite > 0){
+							commandeEffectuee = VRAI;
+						}
+					}
 				}
 				else {
 
@@ -381,19 +394,31 @@ void tableauDeBord(){
 				}
 				break;
 			case 3:
-				// imprimer la commande
-				imprimerProduits(produits, nbProduits, VRAI);
+				// On imprime la commande si et seulement
+				// si une commande est effectuée
+				if (commandeEffectuee){
+				
+					// imprimer la commande
+					imprimerProduits(produits, nbProduits, VRAI);
+				}
+				else {
+					
+					// afficher l'erreur
+					printf(MSG_ERR_COMMANDE_REQUISE);
+				}
 				break;
 			case 4:
-				if (NULL != client){
-				// créer un fichier de factures
-				creerFacture(produits, client, nbProduits);
-				commandeFacturee = VRAI;
+				// si et seulement si une commande est faite 
+				if (commandeEffectuee){
+					
+					// créer un fichier de factures
+					creerFacture(produits, client, nbProduits);
+					commandeFacturee = VRAI;
 				}
 				else{
 
 					// affichage de l'erreur
-					printf(MSG_ERR_CLIENT_REQUIS);
+					printf(MSG_ERR_COMMANDE_REQUISE);
 				}
 				break;
 			default:
@@ -409,12 +434,15 @@ void tableauDeBord(){
 		}
 
 		// libérer la mémoire du client
-		free(client);
+		if (NULL != client){
+			free(client);
+		}
 		
 		// libérer les produits
-		nbProduits = sizeof(produits) / sizeof(Produit);
 		for (i = 0; i < nbProduits; i++) {
-			free(produits[i]);
+			if (NULL != produits[i]){
+				free(produits[i]);
+			}
 		}	
 	}
 	else {
@@ -428,21 +456,37 @@ void tableauDeBord(){
 String *saisieChaine(){
 
 	String val;
+	String valide = "";
 	String ligne;
-	String *pointeur;
-	int n;
+	String *pointeur = NULL;
+
+
+	int n, i, j = 0;
 
 	fgets(ligne, MAX_CHAINE + 1, stdin);
-	n = sscanf(ligne, "%s", &val);
+	n = sscanf(ligne, "%[^\n]", &val);
 
 	while (n != 1) {
 		printf(MSG_SAISIE_RECOMMENCER);
 		fgets(ligne, MAX_CHAINE + 1, stdin);
-		n = sscanf(ligne, "%s", &val);
+		n = sscanf(ligne, "%[^\n]", &val);
 	}
 
-	pointeur = (String *)malloc(strlen(val) + 1);
-	strcpy(*pointeur, val);
+	// on enlève les caractères non désirés 
+	// on admet les lettres de l'alphabets et les
+	// espaces
+	for (i = 0; i < strlen(val); i++){
+		if (isalpha((unsigned char)val[i]) || val[i] == ' '){
+			valide[j] = val[i];
+			j++;
+		}
+	}
+
+	pointeur = (String *)malloc(strlen(valide) + 1);
+
+	if (NULL != pointeur){
+		strcpy(*pointeur, valide);
+	}
 
 	return pointeur;
 }
@@ -471,7 +515,7 @@ int chargerProduit(Produit *pProduits[MAX_PROD], Path pCheminDuFichier){
 	String format;
 	String formatter = "%%%dd	%%%ds	%%%ds	%%f";
 	
-	int lignesNonChargees[MAX_PROD_CHARGEMENT_ERREUR][100] = {};
+	int lignesNonChargees[MAX_PROD_CHARGEMENT_ERREUR][MAX_PROD] = {};
 
 	erreurDepassement = FAUX;
 	erreurFormat = FAUX;
@@ -493,35 +537,37 @@ int chargerProduit(Produit *pProduits[MAX_PROD], Path pCheminDuFichier){
 		while (!feof(entree)) {
 
 			// contrôle de dépassement de tableau
-			if (erreurDepassement || noLigne > MAX_PROD){
+			if (erreurDepassement || nbProduits == (MAX_PROD+1)){
 				
 				// première erreur de dépassement
 				// il faut ajuster nbProduits
-				if (noLigne == nbProduits){
+				if (nbProduits == MAX_PROD){
 					
-					// nbProduit est faux il faut le décrémenter
-					nbProduits--;
+					// il y a une erreur de dépassement
+					erreurDepassement = VRAI;
 				}
 
-				erreurDepassement = VRAI;
+				
 				lignesNonChargees[ERR_PROD_CHARGEMENT_DEPASSEMENT] [indexErreurDep] = noLigne;
 				indexErreurDep++;
 
 			} else {
 				pProduits[nbProduits] = (Produit *)malloc(sizeof(Produit));
-				n = sscanf(ligne, format, &pProduits[nbProduits]->noProduit,
-					&pProduits[nbProduits]->marque, &pProduits[nbProduits]->reference,
-					&pProduits[nbProduits]->prix);
-				pProduits[nbProduits]->quantite = 0;
+				if (NULL != pProduits){
+					n = sscanf(ligne, format, &pProduits[nbProduits]->noProduit,
+						&pProduits[nbProduits]->marque, &pProduits[nbProduits]->reference,
+						&pProduits[nbProduits]->prix);
+					pProduits[nbProduits]->quantite = 0;
 
-				if (n != 4){
-					erreurFormat = VRAI;
-					lignesNonChargees[ERR_PROD_CHARGEMENT_FORMAT][indexErreurForm] = noLigne;
-					indexErreurForm++;
-				}
-				else {
-					// incrémentation du nombre de produits
-					nbProduits++;
+					if (n != 4){
+						erreurFormat = VRAI;
+						lignesNonChargees[ERR_PROD_CHARGEMENT_FORMAT][indexErreurForm] = noLigne;
+						indexErreurForm++;
+					}
+					else {
+						// incrémentation du nombre de produits
+						nbProduits++;
+					}
 				}
 			}
 
@@ -582,16 +628,31 @@ int chargerProduit(Produit *pProduits[MAX_PROD], Path pCheminDuFichier){
 
 /*Fonction saisieClient*/
 Client *saisieClient(){
+	
 	Client *client = (Client *)malloc(sizeof(Client));
 	String *nom, *prenom;
+
+	// On demande le nom du client
 	printf(MSG_SAISIE_NOM_CLIENT);
 	nom = saisieChaine();
-	strcpy(client->nom, *nom);
-	free(nom);
+	
+	// On stocke le prénom que si le pointeur est 
+	// valide. Puis on le libère
+	if (NULL != nom){
+		strcpy(client->nom, *nom);
+		free(nom);
+	}
+	
+	// on demande le prénom du client
 	printf(MSG_SAISIE_PRENOM);
 	prenom = saisieChaine();
-	strcpy(client->prenom, *prenom);
-	free(prenom);
+	
+	// On stocke le prénom que si le pointeur est 
+	// valide. Puis on le libère
+	if (NULL != prenom){
+		strcpy(client->prenom, *prenom);
+		free(prenom);
+	}
 
 	return client;
 }
