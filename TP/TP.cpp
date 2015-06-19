@@ -382,7 +382,7 @@ void tableauDeBord(){
 					// si et seulement si des produits sont 
 					// commandés on affecte vrai à commandeEffectuee
 					commandeEffectuee = FAUX;
-					for (i = 0; i < nbProduits; i++){
+					for (i = 0; i < nbProduits && !commandeEffectuee; i++){
 						if (produits[i]->quantite > 0){
 							commandeEffectuee = VRAI;
 						}
@@ -475,9 +475,13 @@ String *saisieChaine(){
 
 	// on enlève les caractères non désirés 
 	// on admet les lettres de l'alphabets et les
-	// espaces
+	// espaces et les é, è et ë
 	for (i = 0; i < strlen(val); i++){
-		if (isalpha((unsigned char)val[i]) || val[i] == ' '){
+		if (isalpha((unsigned char)val[i]) 
+			|| val[i] == ' ' 
+			|| val[i] == 'é'
+			|| val[i] == 'è'
+			|| val[i] == 'ë'){
 			valide[j] = val[i];
 			j++;
 		}
@@ -614,6 +618,8 @@ int chargerProduit(Produit *pProduits[MAX_PROD], Path pCheminDuFichier){
 			if (indexErreurDep > 0) {
 				// On itère à quelles lignes
 				// et on concatène en format lisible
+				strcpy(separateur, "");
+				strcpy(lignesErr, "");
 				for (j = 0; j < indexErreurDep; j++) {
 					sprintf(noLigneErr, "%d", lignesNonChargees[ERR_PROD_CHARGEMENT_DEPASSEMENT][j]);
 					strcat(lignesErr, separateur);
